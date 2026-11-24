@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     tags: ['v*']
-    paths-ignore: ['docs/**', '**/*.md', '.github/workflows/pwa.yml']
+    paths-ignore: ['docs/**', '**/*.md', '.github/workflows/pwa.yml', '.github/workflows/ios.yml']
 
 permissions:
   contents: write
@@ -16,8 +16,8 @@ jobs:
   testes:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npm test
@@ -28,8 +28,8 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm }
 
       - name: Instalar dependências e gerar o web build
@@ -70,10 +70,10 @@ jobs:
 
       - name: Log do Xcode (se falhar)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with: { name: xcodebuild-log, path: "${{ runner.temp }}/xcodebuild.log" }
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: FazendaConcurseira-ipa
           path: ${{ env.IPA }}
