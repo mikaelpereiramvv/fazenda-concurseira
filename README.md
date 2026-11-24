@@ -18,7 +18,7 @@ No navegador tudo funciona com versões "falsas" dos recursos nativos: dados no 
 ## Gerar o .ipa e instalar no iPhone (custo zero)
 
 1. Suba este repositório para o GitHub como **público**: runners macOS padrão são gratuitos e ilimitados em repositórios públicos.
-2. Crie uma tag: `git tag v0.1.0 && git push --tags`. Ou vá em *Actions › build-ipa › Run workflow*.
+2. Todo push no `main` (ou uma tag `v*`) dispara o build. Também dá para rodar em *Actions › build-ipa › Run workflow*.
 3. Ao terminar (~10–15 min), baixe o `FazendaConcurseira-*.ipa` em *Releases* (tags) ou nos artefatos do job.
 4. **Uma vez só:** instale o [SideStore](https://sidestore.io) no iPhone seguindo o guia oficial (no Windows, pelo instalador indicado lá). Isso também gera o *pairing file* que permite renovar sem PC.
 5. No iPhone: *Ajustes › Privacidade e Segurança › Modo de Desenvolvedor* (ativar e reiniciar).

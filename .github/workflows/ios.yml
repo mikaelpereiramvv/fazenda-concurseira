@@ -5,7 +5,9 @@ name: build-ipa
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     tags: ['v*']
+    paths-ignore: ['docs/**', '**/*.md']
 
 permissions:
   contents: write
@@ -60,7 +62,8 @@ jobs:
           cd "$RUNNER_TEMP"
           mkdir -p Payload
           cp -R App.xcarchive/Products/Applications/App.app Payload/
-          VERSAO="${GITHUB_REF_NAME//\//-}"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then VERSAO="$GITHUB_REF_NAME"; else VERSAO="build-${GITHUB_RUN_NUMBER}"; fi
+          echo "VERSAO=$VERSAO" >> "$GITHUB_ENV"
           zip -qry "FazendaConcurseira-${VERSAO}.ipa" Payload
           ls -lh *.ipa
           echo "IPA=$RUNNER_TEMP/FazendaConcurseira-${VERSAO}.ipa" >> "$GITHUB_ENV"
@@ -76,10 +79,13 @@ jobs:
           path: ${{ env.IPA }}
           retention-days: 30
 
-      - name: Publicar no Release (quando for tag)
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Publicar no Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.VERSAO }}
+          target_commitish: ${{ github.sha }}
+          name: Fazenda Concurseira ${{ env.VERSAO }}
+          prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
           files: ${{ env.IPA }}
           body: |
             .ipa sem assinatura. Instale pelo SideStore (+ → escolher arquivo) com sua Apple ID gratuita.
