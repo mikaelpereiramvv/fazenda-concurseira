@@ -1,0 +1,44 @@
+{
+  "name": "fazenda-concurseira",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Gestão de estudos estilo concurseiro + fazendinha brasileira gamificada. 100% offline.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "assets": "node scripts/assets/process.mjs",
+    "ios:sync": "npm run build && npx cap sync ios && node scripts/ios/patch-ios.mjs",
+    "ios:patch": "node scripts/ios/patch-ios.mjs"
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.6.2",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/share": "^8.0.3",
+    "phaser": "^3.90.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "maxrects-packer": "^3.0.0",
+    "sharp": "^0.35.5",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1",
+    "xcode": "^4.0.0"
+  }
+}

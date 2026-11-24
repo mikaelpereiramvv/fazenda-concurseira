@@ -1,0 +1,56 @@
+{
+  "_comentario": "Fonte da verdade dos assets. Arte bruta do Gemini vai em assets/raw/<chave>.(png|jpg|webp). Folhas com vários itens vão em assets/raw/sheets e são descritas em 'sheets'. Rode: npm run assets",
+  "atlas": { "nome": "farm", "tamanhoMax": 2048, "padding": 2 },
+  "tamanhos": {
+    "bloco": { "largura": 384, "alturaMax": 576, "ancora": [0.5, 1], "_": "tiles, canteiros e culturas (bloco de terra isométrico); altura proporcional" },
+    "obj1": { "largura": 384, "altura": 384, "ancora": [0.5, 1] },
+    "obj2": { "largura": 768, "altura": 768, "ancora": [0.5, 1] },
+    "animal_p": { "largura": 192, "altura": 192, "ancora": [0.5, 1] },
+    "animal_m": { "largura": 288, "altura": 288, "ancora": [0.5, 1] },
+    "animal_g": { "largura": 384, "altura": 384, "ancora": [0.5, 1] },
+    "icone": { "largura": 96, "altura": 96, "ancora": [0.5, 0.5] }
+  },
+  "appIcon": { "fonte": "app_icon", "saidas": ["ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png", "public/icon-512.png"], "fundo": "#F5EBD7" },
+  "sheets": [
+    { "arquivo": "sheets/cafe_estagios", "chaves": ["crop_cafe_stage1", "crop_cafe_stage2", "crop_cafe_stage3", "crop_cafe_stage4", "crop_cafe_murcho"] },
+    { "arquivo": "sheets/icones_ui", "chaves": ["ui_moeda", "ui_xp", "ui_ofensiva", null, "ui_cadeado", "ui_relogio", null, null, null] }
+  ],
+  "assets": {
+    "tile_grama": "bloco",
+    "tile_terra_roxa": "bloco",
+    "tile_terra_arada": "bloco",
+    "tile_terra_molhada": "bloco",
+    "tile_caminho": "bloco",
+    "canteiro_vazio": "bloco",
+
+    "crop_milho_stage1": "bloco", "crop_milho_stage2": "bloco", "crop_milho_stage3": "bloco", "crop_milho_stage4": "bloco", "crop_milho_murcho": "bloco",
+    "crop_feijao_stage1": "bloco", "crop_feijao_stage2": "bloco", "crop_feijao_stage3": "bloco", "crop_feijao_stage4": "bloco", "crop_feijao_murcho": "bloco",
+    "crop_mandioca_stage1": "bloco", "crop_mandioca_stage2": "bloco", "crop_mandioca_stage3": "bloco", "crop_mandioca_stage4": "bloco", "crop_mandioca_murcho": "bloco",
+    "crop_abobora_stage1": "bloco", "crop_abobora_stage2": "bloco", "crop_abobora_stage3": "bloco", "crop_abobora_stage4": "bloco", "crop_abobora_murcho": "bloco",
+    "crop_banana_stage1": "bloco", "crop_banana_stage2": "bloco", "crop_banana_stage3": "bloco", "crop_banana_stage4": "bloco", "crop_banana_murcho": "bloco",
+    "crop_cana_stage1": "bloco", "crop_cana_stage2": "bloco", "crop_cana_stage3": "bloco", "crop_cana_stage4": "bloco", "crop_cana_murcho": "bloco",
+    "crop_laranja_stage1": "bloco", "crop_laranja_stage2": "bloco", "crop_laranja_stage3": "bloco", "crop_laranja_stage4": "bloco", "crop_laranja_murcho": "bloco",
+    "crop_cafe_stage1": "bloco", "crop_cafe_stage2": "bloco", "crop_cafe_stage3": "bloco", "crop_cafe_stage4": "bloco", "crop_cafe_murcho": "bloco",
+    "crop_acai_stage1": "bloco", "crop_acai_stage2": "bloco", "crop_acai_stage3": "bloco", "crop_acai_stage4": "bloco", "crop_acai_murcho": "bloco",
+
+    "bld_casa_lv1": "obj2", "bld_casa_lv2": "obj2", "bld_casa_lv3": "obj2", "bld_casa_lv4": "obj2",
+    "bld_galinheiro": "obj1",
+    "bld_ipe": "obj1", "bld_ipe_florido": "obj1",
+    "bld_lago": "obj2",
+    "bld_casa_farinha": "obj2",
+    "bld_curral": "obj2",
+    "bld_paiol": "obj1",
+    "bld_terreiro": "obj2",
+    "bld_cerca_a": "obj1", "bld_cerca_b": "obj1", "bld_cerca_poste": "obj1",
+    "bld_caminho": "bloco",
+
+    "animal_galinha_idle_01": "animal_p",
+    "animal_cachorro_idle_01": "animal_m",
+    "animal_nelore_idle_01": "animal_g",
+    "animal_capivara_idle_01": "animal_m",
+    "animal_mico_idle_01": "animal_m",
+    "animal_arara_idle_01": "animal_m",
+
+    "ui_moeda": "icone", "ui_xp": "icone", "ui_ofensiva": "icone", "ui_cadeado": "icone", "ui_relogio": "icone"
+  }
+}

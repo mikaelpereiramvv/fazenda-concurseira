@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+*.ipa
+Payload/
+.DS_Store
+ios/App/Pods/
+ios/App/App/public/
+ios/DerivedData/
+ios/App/App.xcodeproj/xcuserdata/
+ios/App/App.xcworkspace/xcuserdata/
+assets/.cache/

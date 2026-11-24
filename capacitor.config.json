@@ -1,0 +1,14 @@
+{
+  "appId": "br.fazendaconcurseira.app",
+  "appName": "Fazenda Concurseira",
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#F5EBD7"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}

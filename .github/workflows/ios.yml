@@ -1,0 +1,86 @@
+# Gera o .ipa SEM assinatura num runner macOS gratuito (repositório público = minutos ilimitados).
+# Assine e instale com o SideStore (ou Sideloadly) usando sua Apple ID gratuita.
+name: build-ipa
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  ipa:
+    needs: testes
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+
+      - name: Instalar dependências e gerar o web build
+        run: |
+          npm ci
+          npm run build
+          npx cap sync ios
+          node scripts/ios/patch-ios.mjs
+
+      - name: Xcode disponível
+        run: xcodebuild -version
+
+      - name: Archive sem assinatura
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -skipPackagePluginValidation \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            archive | tee "$RUNNER_TEMP/xcodebuild.log" | grep -E "error:|warning: .*Swift|ARCHIVE" || true
+          test -d "$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app"
+
+      - name: Empacotar .ipa
+        run: |
+          cd "$RUNNER_TEMP"
+          mkdir -p Payload
+          cp -R App.xcarchive/Products/Applications/App.app Payload/
+          VERSAO="${GITHUB_REF_NAME//\//-}"
+          zip -qry "FazendaConcurseira-${VERSAO}.ipa" Payload
+          ls -lh *.ipa
+          echo "IPA=$RUNNER_TEMP/FazendaConcurseira-${VERSAO}.ipa" >> "$GITHUB_ENV"
+
+      - name: Log do Xcode (se falhar)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with: { name: xcodebuild-log, path: "${{ runner.temp }}/xcodebuild.log" }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FazendaConcurseira-ipa
+          path: ${{ env.IPA }}
+          retention-days: 30
+
+      - name: Publicar no Release (quando for tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.IPA }}
+          body: |
+            .ipa sem assinatura. Instale pelo SideStore (+ → escolher arquivo) com sua Apple ID gratuita.
+            Atualizar por cima mantém os dados. Exporte um backup antes por garantia.

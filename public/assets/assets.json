@@ -1,0 +1,338 @@
+{
+ "gerado": "2026-11-24T21:40:41.747Z",
+ "atlas": "assets/atlas/farm.json",
+ "frames": {
+  "crop_cafe_stage1": {
+   "w": 384,
+   "h": 273,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cafe_stage2": {
+   "w": 384,
+   "h": 330,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cafe_stage3": {
+   "w": 384,
+   "h": 472,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cafe_stage4": {
+   "w": 384,
+   "h": 507,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cafe_murcho": {
+   "w": 384,
+   "h": 405,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "ui_moeda": {
+   "w": 96,
+   "h": 96,
+   "ancora": [
+    0.5,
+    0.5
+   ]
+  },
+  "ui_xp": {
+   "w": 96,
+   "h": 96,
+   "ancora": [
+    0.5,
+    0.5
+   ]
+  },
+  "ui_ofensiva": {
+   "w": 96,
+   "h": 96,
+   "ancora": [
+    0.5,
+    0.5
+   ]
+  },
+  "ui_cadeado": {
+   "w": 96,
+   "h": 96,
+   "ancora": [
+    0.5,
+    0.5
+   ]
+  },
+  "ui_relogio": {
+   "w": 96,
+   "h": 96,
+   "ancora": [
+    0.5,
+    0.5
+   ]
+  },
+  "tile_grama": {
+   "w": 384,
+   "h": 283,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "tile_terra_roxa": {
+   "w": 384,
+   "h": 332,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "tile_terra_arada": {
+   "w": 384,
+   "h": 299,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "tile_terra_molhada": {
+   "w": 384,
+   "h": 323,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "tile_caminho": {
+   "w": 384,
+   "h": 318,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "canteiro_vazio": {
+   "w": 384,
+   "h": 299,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_milho_stage1": {
+   "w": 384,
+   "h": 320,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_milho_stage2": {
+   "w": 384,
+   "h": 302,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_milho_stage3": {
+   "w": 384,
+   "h": 331,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_milho_stage4": {
+   "w": 384,
+   "h": 388,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_milho_murcho": {
+   "w": 384,
+   "h": 366,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_feijao_stage1": {
+   "w": 384,
+   "h": 274,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_feijao_stage2": {
+   "w": 384,
+   "h": 285,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_feijao_stage3": {
+   "w": 384,
+   "h": 346,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_feijao_stage4": {
+   "w": 384,
+   "h": 392,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_feijao_murcho": {
+   "w": 384,
+   "h": 359,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_mandioca_stage1": {
+   "w": 384,
+   "h": 320,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_mandioca_stage2": {
+   "w": 384,
+   "h": 357,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_mandioca_stage3": {
+   "w": 384,
+   "h": 306,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_mandioca_stage4": {
+   "w": 384,
+   "h": 383,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_mandioca_murcho": {
+   "w": 384,
+   "h": 363,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_casa_lv1": {
+   "w": 768,
+   "h": 768,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_cerca_a": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_cerca_b": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_cerca_poste": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_caminho": {
+   "w": 384,
+   "h": 318,
+   "ancora": [
+    0.5,
+    1
+   ]
+  }
+ },
+ "faltando": [
+  "crop_abobora_stage1",
+  "crop_abobora_stage2",
+  "crop_abobora_stage3",
+  "crop_abobora_stage4",
+  "crop_abobora_murcho",
+  "crop_banana_stage1",
+  "crop_banana_stage2",
+  "crop_banana_stage3",
+  "crop_banana_stage4",
+  "crop_banana_murcho",
+  "crop_cana_stage1",
+  "crop_cana_stage2",
+  "crop_cana_stage3",
+  "crop_cana_stage4",
+  "crop_cana_murcho",
+  "crop_laranja_stage1",
+  "crop_laranja_stage2",
+  "crop_laranja_stage3",
+  "crop_laranja_stage4",
+  "crop_laranja_murcho",
+  "crop_acai_stage1",
+  "crop_acai_stage2",
+  "crop_acai_stage3",
+  "crop_acai_stage4",
+  "crop_acai_murcho",
+  "bld_casa_lv2",
+  "bld_casa_lv3",
+  "bld_casa_lv4",
+  "bld_galinheiro",
+  "bld_ipe",
+  "bld_ipe_florido",
+  "bld_lago",
+  "bld_casa_farinha",
+  "bld_curral",
+  "bld_paiol",
+  "bld_terreiro",
+  "animal_galinha_idle_01",
+  "animal_cachorro_idle_01",
+  "animal_nelore_idle_01",
+  "animal_capivara_idle_01",
+  "animal_mico_idle_01",
+  "animal_arara_idle_01"
+ ]
+}

@@ -1,0 +1,93 @@
+{
+  "_comentario": "Calibrada para 2 h/dia de estudo. Edite aqui para balancear sem mexer no código.",
+  "versao": 2,
+  "niveis": {
+    "_formula": "XP para ir do nível n ao n+1 = base + incremento * (n - 1). 1 minuto líquido = 1 XP.",
+    "base": 60,
+    "incremento": 12,
+    "moedasPorNivel": 30,
+    "nivelMaximo": 99
+  },
+  "moedas": {
+    "porMinutoCronometro": 1,
+    "porMinutoManual": 0.5,
+    "sessaoMinimaParaMoedasMin": 10,
+    "bonusPomodoroCompleto": 5,
+    "bonusSessao60Min": 15,
+    "metaDiaria": 40,
+    "metaSemanal": 150,
+    "porAcerto": 1,
+    "maxAcertosPagosPorDia": 60
+  },
+  "ofensiva": {
+    "minutosMinimosNoDia": 30,
+    "recuperacaoManualMaxDias": 2,
+    "multiplicadores": [
+      { "dias": 3, "bonus": 0.05 },
+      { "dias": 7, "bonus": 0.1 },
+      { "dias": 14, "bonus": 0.15 },
+      { "dias": 30, "bonus": 0.25 }
+    ],
+    "congeladorPreco": 250,
+    "congeladorEstoqueMax": 2,
+    "congeladorGratisACadaDias": 7
+  },
+  "lancamentoManual": {
+    "duracaoMinMin": 1,
+    "duracaoMaxMin": 720,
+    "maxMinutosManuaisPorDia": 600
+  },
+  "plantacao": {
+    "crescimentoManualFator": 0.5
+  },
+  "terreno": {
+    "canteirosIniciais": 6,
+    "precoCanteiroPorExistente": 50,
+    "lotes": [
+      { "lote": 1, "tamanho": 8, "preco": 0 },
+      { "lote": 2, "tamanho": 10, "preco": 400, "nivel": 5 },
+      { "lote": 3, "tamanho": 12, "preco": 1200, "nivel": 10 },
+      { "lote": 4, "tamanho": 14, "preco": 2800, "nivel": 18 },
+      { "lote": 5, "tamanho": 16, "preco": 5500, "nivel": 26 },
+      { "lote": 6, "tamanho": 18, "preco": 9000, "nivel": 34 }
+    ]
+  },
+  "biomas": [
+    { "id": "mata_atlantica", "nome": "Mata Atlântica / terra roxa", "nivel": 1 },
+    { "id": "cerrado", "nome": "Cerrado", "nivel": 15 },
+    { "id": "pantanal", "nome": "Pantanal", "nivel": 25 },
+    { "id": "caatinga", "nome": "Caatinga", "nivel": 35 },
+    { "id": "amazonia", "nome": "Amazônia", "nivel": 45 }
+  ],
+  "culturas": [
+    { "id": "milho", "nome": "Milho", "nivel": 1, "semente": 10, "minutos": 30, "venda": 13 },
+    { "id": "feijao", "nome": "Feijão", "nivel": 2, "semente": 15, "minutos": 45, "venda": 20 },
+    { "id": "mandioca", "nome": "Mandioca", "nivel": 3, "semente": 25, "minutos": 60, "venda": 33 },
+    { "id": "abobora", "nome": "Abóbora", "nivel": 4, "semente": 30, "minutos": 75, "venda": 40 },
+    { "id": "banana", "nome": "Banana", "nivel": 5, "semente": 40, "minutos": 90, "venda": 52 },
+    { "id": "cana", "nome": "Cana-de-açúcar", "nivel": 7, "semente": 60, "minutos": 120, "venda": 78 },
+    { "id": "laranja", "nome": "Laranja", "nivel": 8, "semente": 75, "minutos": 150, "venda": 98 },
+    { "id": "cafe", "nome": "Café", "nivel": 10, "semente": 100, "minutos": 180, "venda": 130 },
+    { "id": "acai", "nome": "Açaí", "nivel": 25, "semente": 150, "minutos": 240, "venda": 200 }
+  ],
+  "animais": [
+    { "id": "galinha", "nome": "Galinha caipira", "nivel": 2, "preco": 60, "requer": "galinheiro", "capacidadePorAbrigo": 6, "bonusMetaDiaria": 5, "descricao": "Bota um ovo (+5) quando você bate a meta do dia." },
+    { "id": "cachorro", "nome": "Cachorro caramelo", "nivel": 4, "preco": 200, "max": 1, "descricao": "Mascote. Comemora quando você bate meta." },
+    { "id": "nelore", "nome": "Gado Nelore", "nivel": 8, "preco": 450, "requer": "curral", "capacidadePorAbrigo": 4, "bonusMetaDiaria": 15, "descricao": "+15 quando você bate a meta do dia." },
+    { "id": "capivara", "nome": "Capivara", "nivel": 10, "preco": 900, "requer": "lago", "capacidadePorAbrigo": 3, "descricao": "Relaxa no lago. +1 congelador de ofensiva a cada 30 dias." },
+    { "id": "mico", "nome": "Mico-leão-dourado", "nivel": 12, "preco": 700, "requer": "ipe", "capacidadePorAbrigo": 2, "descricao": "Vive perto do ipê." },
+    { "id": "arara", "nome": "Arara-canindé", "nivel": 14, "preco": 1100, "descricao": "Anuncia o fim do Pomodoro." }
+  ],
+  "construcoes": [
+    { "id": "casa", "nome": "Casa de fazenda colonial", "nivel": 1, "preco": 0, "tamanho": [2, 2], "unica": true, "inicial": true, "upgrades": [800, 2400, 6000], "descricao": "+1 canteiro por upgrade." },
+    { "id": "galinheiro", "nome": "Galinheiro", "nivel": 2, "preco": 120, "tamanho": [1, 1], "descricao": "Abriga até 6 galinhas." },
+    { "id": "ipe", "nome": "Ipê amarelo", "nivel": 3, "preco": 120, "tamanho": [1, 1], "categoria": "decoracao", "descricao": "Floresce quando você bate a meta semanal." },
+    { "id": "lago", "nome": "Lago", "nivel": 6, "preco": 400, "tamanho": [2, 2], "descricao": "Necessário para capivaras." },
+    { "id": "casa_farinha", "nome": "Casa de farinha", "nivel": 6, "preco": 900, "tamanho": [2, 2], "unica": true, "bonusVenda": { "mandioca": 0.15 }, "descricao": "+15% na venda de mandioca." },
+    { "id": "curral", "nome": "Curral", "nivel": 8, "preco": 450, "tamanho": [2, 2], "descricao": "Abriga até 4 cabeças de gado." },
+    { "id": "paiol", "nome": "Paiol", "nivel": 8, "preco": 500, "tamanho": [1, 1], "unica": true, "descricao": "Guarda colheitas (fase 2)." },
+    { "id": "terreiro", "nome": "Terreiro de café", "nivel": 10, "preco": 600, "tamanho": [2, 2], "unica": true, "bonusVenda": { "cafe": 0.1 }, "descricao": "+10% na venda de café." },
+    { "id": "cerca", "nome": "Cerca de madeira", "nivel": 1, "preco": 4, "tamanho": [1, 1], "categoria": "decoracao", "descricao": "Decorativa." },
+    { "id": "caminho", "nome": "Caminho de terra roxa", "nivel": 1, "preco": 2, "tamanho": [1, 1], "categoria": "decoracao", "chao": true, "descricao": "Decorativo; dá para andar por cima." }
+  ]
+}

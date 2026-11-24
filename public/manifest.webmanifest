@@ -1,0 +1,11 @@
+{
+  "name": "Fazenda Concurseira",
+  "short_name": "Fazenda",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5EBD7",
+  "theme_color": "#F5EBD7",
+  "lang": "pt-BR",
+  "icons": [{ "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}
