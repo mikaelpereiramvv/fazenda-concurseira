@@ -5,6 +5,7 @@
     "bloco": { "largura": 384, "alturaMax": 576, "ancora": [0.5, 1], "_": "tiles, canteiros e culturas (bloco de terra isométrico); altura proporcional" },
     "obj1": { "largura": 384, "altura": 384, "ancora": [0.5, 1] },
     "obj2": { "largura": 768, "altura": 768, "ancora": [0.5, 1] },
+    "poste": { "largura": 384, "altura": 270, "ancora": [0.5, 1], "_": "poste da cerca: mais baixo para casar com a altura das tábuas" },
     "animal_p": { "largura": 192, "altura": 192, "ancora": [0.5, 1] },
     "animal_m": { "largura": 288, "altura": 288, "ancora": [0.5, 1] },
     "animal_g": { "largura": 384, "altura": 384, "ancora": [0.5, 1] },
@@ -41,7 +42,7 @@
     "bld_curral": "obj2",
     "bld_paiol": "obj1",
     "bld_terreiro": "obj2",
-    "bld_cerca_a": "obj1", "bld_cerca_b": "obj1", "bld_cerca_poste": "obj1",
+    "bld_cerca_a": "obj1", "bld_cerca_b": "obj1", "bld_cerca_poste": "poste",
     "bld_caminho": "bloco",
 
     "animal_galinha_idle_01": "animal_p",

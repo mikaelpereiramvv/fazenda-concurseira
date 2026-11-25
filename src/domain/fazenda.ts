@@ -13,9 +13,32 @@ export function tamanhoLote(state: AppState): number {
   return lote(state.fazenda.lote)?.tamanho ?? 8;
 }
 
-export function tamanhoItem(item: Pick<ItemFazenda, 'tipo' | 'ref'>): [number, number] {
-  if (item.tipo === 'construcao') return construcao(item.ref)?.tamanho ?? [1, 1];
+export function tamanhoItem(item: Pick<ItemFazenda, 'tipo' | 'ref' | 'rot'>): [number, number] {
+  if (item.tipo === 'construcao') {
+    const [w, h] = construcao(item.ref)?.tamanho ?? [1, 1];
+    return (item.rot ?? 0) % 2 === 1 ? [h, w] : [w, h];
+  }
   return [1, 1];
+}
+
+/** Quantas rotações um item tem. A cerca tem 3 (duas direções + poste); o resto, 2 (normal e espelhado). */
+export function rotacoesDe(ref: string): number {
+  return ref === 'cerca' ? 3 : 2;
+}
+
+export function proximaRotacao(ref: string, rot = 0): number {
+  return (rot + 1) % rotacoesDe(ref);
+}
+
+export function girarItem(state: AppState, id: string): Resultado {
+  const b = bloqueadoDuranteSessao(state); if (b) return b;
+  const it = state.fazenda.itens.find((i) => i.id === id);
+  if (!it || it.tipo === 'canteiro') return falha('Esse item não gira.');
+  const rot = proximaRotacao(it.ref, it.rot ?? 0);
+  const [w, h] = tamanhoItem({ ...it, rot });
+  if (it.tipo === 'construcao' && !areaLivre(state, it.x, it.y, w, h, id)) return falha('Não há espaço para girar aqui.');
+  const itens = state.fazenda.itens.map((i) => (i.id === id ? { ...i, rot } : i));
+  return { ok: true, state: { ...state, fazenda: { ...state.fazenda, itens } } };
 }
 
 function ocupa(item: ItemFazenda, x: number, y: number): boolean {
@@ -168,16 +191,17 @@ export function murcharCulturas(state: AppState): { state: AppState; murchas: nu
 
 // ---------- Loja: construções e animais ----------
 
-export function comprarConstrucao(state: AppState, ref: string, x: number, y: number): Resultado {
+export function comprarConstrucao(state: AppState, ref: string, x: number, y: number, rot = 0): Resultado {
   const b = bloqueadoDuranteSessao(state); if (b) return b;
   const c = construcao(ref);
   if (!c) return falha('Item desconhecido.');
   if (nivelAtual(state) < c.nivel) return falha(`${c.nome} libera no nível ${c.nivel}.`);
   if (c.unica && contar(state, 'construcao', ref) > 0) return falha(`Você já tem ${c.nome.toLowerCase()}.`);
-  if (!areaLivre(state, x, y, c.tamanho[0], c.tamanho[1])) return falha('Não cabe aí.');
+  const [cw, ch] = tamanhoItem({ tipo: 'construcao', ref, rot });
+  if (!areaLivre(state, x, y, cw, ch)) return falha('Não cabe aí.');
   const pago = cobrar(state, c.preco, c.nome);
   if (!pago) return falha(`Faltam moedas (${c.preco}).`);
-  const item: ItemFazenda = { id: novoId(), tipo: 'construcao', ref, x, y, nivel: 1 };
+  const item: ItemFazenda = { id: novoId(), tipo: 'construcao', ref, x, y, nivel: 1, ...(rot ? { rot } : {}) };
   return { ok: true, state: { ...pago, fazenda: { ...pago.fazenda, itens: [...pago.fazenda.itens, item] } } };
 }
 

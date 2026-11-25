@@ -83,6 +83,8 @@ export interface ItemFazenda {
   y: number;
   cultura?: CulturaPlantada;
   nivel?: number;
+  /** Rotação (opcional; ausente = 0). Itens salvos antes desta versão continuam válidos. */
+  rot?: number;
 }
 
 export interface Fazenda {

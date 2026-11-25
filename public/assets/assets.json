@@ -1,5 +1,5 @@
 {
- "gerado": "2026-11-24T21:40:41.747Z",
+ "gerado": "2026-11-25T00:17:41.176Z",
  "atlas": "assets/atlas/farm.json",
  "frames": {
   "crop_cafe_stage1": {
@@ -276,7 +276,7 @@
   },
   "bld_cerca_poste": {
    "w": 384,
-   "h": 384,
+   "h": 270,
    "ancora": [
     0.5,
     1

@@ -169,3 +169,46 @@ describe('ciclo e backup', () => {
     expect(lerBackup('{"x":1}').ok).toBe(false);
   });
 });
+
+import { girarItem, tamanhoItem as tam } from './fazenda';
+import { migrar } from './estado';
+
+describe('girar objetos (compatível com dados antigos)', () => {
+  it('estado salvo na versão anterior (sem "rot") carrega intacto', () => {
+    let s = comMateria();
+    const c = s.fazenda.itens.find((i) => i.tipo === 'canteiro')!;
+    const p = plantar(s, c.id, 'milho'); if (!p.ok) throw new Error();
+    s = registrarSessao(p.state, { materiaId: 'pt', inicio: H(8), duracaoMin: 20, origem: 'cronometro' }, H(9)).state;
+    s = { ...s, fazenda: { ...s.fazenda, itens: [...s.fazenda.itens, { id: 'cerca-velha', tipo: 'construcao', ref: 'cerca', x: 7, y: 7 }] } };
+    const json = JSON.stringify(s); // exatamente o que já está no aparelho
+    const lido = migrar(JSON.parse(json));
+    expect(lido.sessoes).toEqual(s.sessoes);
+    expect(lido.jogador).toEqual(s.jogador);
+    expect(lido.fazenda).toEqual(s.fazenda);
+    expect(lido.fazenda.itens.find((i) => i.id === c.id)?.cultura?.minutos).toBe(20);
+  });
+  it('cerca gira entre 3 posições e o resto preserva', () => {
+    let s = comMateria();
+    s = { ...s, fazenda: { ...s.fazenda, itens: [...s.fazenda.itens, { id: 'f', tipo: 'construcao', ref: 'cerca', x: 7, y: 7 }] } };
+    const antes = s.sessoes.length;
+    for (const esperado of [1, 2, 0]) {
+      const r = girarItem(s, 'f'); if (!r.ok) throw new Error(r.erro);
+      s = r.state;
+      expect(s.fazenda.itens.find((i) => i.id === 'f')!.rot).toBe(esperado);
+    }
+    expect(s.sessoes.length).toBe(antes);
+  });
+  it('construção não quadrada troca largura e altura ao girar', () => {
+    expect(tam({ tipo: 'construcao', ref: 'casa', rot: 1 })).toEqual([2, 2]);
+    expect(tam({ tipo: 'construcao', ref: 'cerca', rot: 1 })).toEqual([1, 1]);
+  });
+  it('compra já girada e não gira durante a sessão', () => {
+    let s = { ...comMateria(), jogador: { xp: 0, moedas: 100, congeladores: 0 } };
+    const r = comprarConstrucao(s, 'cerca', 7, 0, 1); if (!r.ok) throw new Error(r.erro);
+    s = r.state;
+    const f = s.fazenda.itens.find((i) => i.ref === 'cerca')!;
+    expect(f.rot).toBe(1);
+    const emSessao = { ...s, sessaoAtiva: { inicio: H(8).toISOString(), pausas: [], modo: 'livre' as const, materiaId: 'pt', saidaAutorizada: false, penalidades: 0 } };
+    expect(girarItem(emSessao, f.id).ok).toBe(false);
+  });
+});

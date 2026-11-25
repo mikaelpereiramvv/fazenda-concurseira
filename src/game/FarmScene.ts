@@ -144,7 +144,7 @@ export class FarmScene extends Phaser.Scene {
 
   private chaveVisual(it: ItemFazenda) {
     if (it.tipo === 'canteiro') return `c:${it.cultura?.id ?? '-'}:${estagioCultura(it) ?? '-'}:${it.x},${it.y}`;
-    return `${it.ref}:${it.nivel ?? 1}:${it.x},${it.y}`;
+    return `${it.ref}:${it.nivel ?? 1}:${it.x},${it.y}:r${it.rot ?? 0}`;
   }
 
   private desenharChao(s: AppState, n: number) {
@@ -189,15 +189,21 @@ export class FarmScene extends Phaser.Scene {
       img.setPosition(p.x, p.y + TILE_H / 2 + this.espessura);
       img.setDepth((it.x + it.y) * 10 + 1);
     } else if (it.tipo === 'construcao') {
-      const k = it.ref === 'casa' ? `bld_casa_lv${it.nivel ?? 1}` : it.ref === 'cerca' ? 'bld_cerca_a' : `bld_${it.ref}`;
-      const alt = it.ref === 'casa' ? ['bld_casa_lv1'] : [];
+      const rot = it.rot ?? 0;
+      const CERCAS = ['bld_cerca_a', 'bld_cerca_b', 'bld_cerca_poste'];
+      const k = it.ref === 'casa' ? `bld_casa_lv${it.nivel ?? 1}` : it.ref === 'cerca' ? CERCAS[rot % 3] : `bld_${it.ref}`;
+      const alt = it.ref === 'casa' ? ['bld_casa_lv1'] : it.ref === 'cerca' ? ['bld_cerca_a'] : [];
       img = this.imagem(k, alt, [TILE_W * w, TILE_W * Math.max(w, h)]);
+      // sem arte própria para a outra direção: espelha horizontalmente
+      if (it.ref !== 'cerca' && rot % 2 === 1) img.setFlipX(true);
+      if (it.ref === 'cerca' && rot === 1 && !this.temFrame('bld_cerca_b')) img.setFlipX(true);
       const centro = isoParaTela(it.x + (w - 1) / 2, it.y + (h - 1) / 2);
       const base = isoParaTela(it.x + w - 0.5, it.y + h - 0.5);
       img.setPosition(centro.x, base.y + this.espessura * 0.6);
       img.setDepth((it.x + w - 1 + it.y + h - 1) * 10 + 5);
     } else {
       img = this.imagem(`animal_${it.ref}_idle_01`, [], [192, 192]);
+      if ((it.rot ?? 0) % 2 === 1) img.setFlipX(true);
       const p = isoParaTela(it.x, it.y);
       img.setPosition(p.x, p.y + TILE_H * 0.2);
       img.setDepth((it.x + it.y) * 10 + 6);

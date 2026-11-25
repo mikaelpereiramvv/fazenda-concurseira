@@ -6,7 +6,7 @@ import { nivelDeXp } from '../domain/niveis';
 import { calcularOfensiva } from '../domain/ofensiva';
 import { proximaMateria } from '../domain/ciclo';
 import { ECONOMIA, cultura } from '../domain/economia';
-import { colher, comprarCanteiro, comprarConstrucao, estagioCultura, moverItem, plantar } from '../domain/fazenda';
+import { colher, comprarCanteiro, comprarConstrucao, estagioCultura, girarItem, moverItem, plantar, proximaRotacao, rotacoesDe, tamanhoItem } from '../domain/fazenda';
 import { estaPausada, segundosAteProximoPomodoro, segundosLiquidos, pomodorosCompletos } from '../domain/timer';
 import { formatarRelogio } from '../domain/datas';
 import type { AppState, ItemFazenda, ModoTimer, ResumoSessao } from '../domain/tipos';
@@ -16,7 +16,7 @@ import {
 import { Folha, Icone, Moedas, perguntar } from './comum';
 
 export type PedidoColocacao =
-  | { tipo: 'construcao'; ref: string; w: number; h: number; rotulo: string }
+  | { tipo: 'construcao'; ref: string; w: number; h: number; rotulo: string; rot?: number }
   | { tipo: 'canteiro'; w: 1; h: 1; rotulo: string }
   | { tipo: 'mover'; id: string; w: number; h: number; rotulo: string };
 
@@ -40,7 +40,7 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Prop
     if (colocacao) {
       const r = colocacao.tipo === 'canteiro' ? comprarCanteiro(s, x, y)
         : colocacao.tipo === 'mover' ? moverItem(s, colocacao.id, x, y)
-        : comprarConstrucao(s, colocacao.ref, x, y);
+        : comprarConstrucao(s, colocacao.ref, x, y, colocacao.rot ?? 0);
       if (!r.ok) return avisar(r.erro);
       atualizar(() => r.state);
       avisar(colocacao.tipo === 'mover' ? 'Movido!' : `${colocacao.rotulo} colocado! 🎉`);
@@ -61,10 +61,16 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Prop
     setItemSel(item);
   };
 
-  const colocacaoCena: Colocacao | null = useMemo(
-    () => (colocacao ? { w: colocacao.w, h: colocacao.h, rotulo: colocacao.rotulo } : null),
-    [colocacao],
-  );
+  const colocacaoCena: Colocacao | null = useMemo(() => {
+    if (!colocacao) return null;
+    const [w, h] = colocacao.tipo === 'construcao' ? tamanhoItem({ tipo: 'construcao', ref: colocacao.ref, rot: colocacao.rot }) : [colocacao.w, colocacao.h];
+    return { w, h, rotulo: colocacao.rotulo };
+  }, [colocacao]);
+
+  const girarColocacao = () => {
+    if (colocacao?.tipo !== 'construcao') return;
+    setColocacao({ ...colocacao, rot: proximaRotacao(colocacao.ref, colocacao.rot ?? 0) });
+  };
 
   return (
     <div className="tela-fazenda">
@@ -83,8 +89,12 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Prop
 
       {colocacao ? (
         <div className="aviso-colocar">
-          <span style={{ flex: 1 }}>Toque no terreno para colocar: {colocacao.rotulo}</span>
-          <button className="btn" onClick={() => setColocacao(null)}>Concluir</button>
+          <span style={{ flex: 1 }}>
+            Toque no terreno para colocar: {colocacao.rotulo}
+            {colocacao.tipo === 'construcao' && rotacoesDe(colocacao.ref) > 1 && <small style={{ display: 'block', fontWeight: 500 }}>Posição {(colocacao.rot ?? 0) + 1} de {rotacoesDe(colocacao.ref)}</small>}
+          </span>
+          {colocacao.tipo === 'construcao' && <button className="btn" style={{ flex: 'none' }} onClick={girarColocacao}>↻ Girar</button>}
+          <button className="btn" style={{ flex: 'none' }} onClick={() => setColocacao(null)}>Concluir</button>
         </div>
       ) : !s.sessaoAtiva ? (
         <PainelIniciar s={s} irPara={irPara} />
@@ -122,12 +132,20 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Prop
       )}
 
       {itemSel && (
-        <Folha titulo={itemSel.ref === 'casa' ? 'Casa de fazenda' : 'Item'} aoFechar={() => setItemSel(null)}>
-          <button className="btn grande" onClick={() => {
-            const w = itemSel.tipo === 'construcao' ? (ECONOMIA.construcoes.find((c) => c.id === itemSel.ref)?.tamanho ?? [1, 1]) : [1, 1];
-            setColocacao({ tipo: 'mover', id: itemSel.id, w: w[0], h: w[1], rotulo: 'novo lugar' });
-            setItemSel(null);
-          }}>Mover</button>
+        <Folha titulo={ECONOMIA.construcoes.find((c) => c.id === itemSel.ref)?.nome ?? ECONOMIA.animais.find((a) => a.id === itemSel.ref)?.nome ?? 'Item'} aoFechar={() => setItemSel(null)}>
+          <div className="linha">
+            <button className="btn grande" onClick={() => {
+              const r = girarItem(s, itemSel.id);
+              if (!r.ok) return avisar(r.erro);
+              atualizar(() => r.state);
+              setItemSel(r.state.fazenda.itens.find((i) => i.id === itemSel.id) ?? null);
+            }}>↻ Girar</button>
+            <button className="btn grande" onClick={() => {
+              const [w, h] = tamanhoItem(itemSel);
+              setColocacao({ tipo: 'mover', id: itemSel.id, w, h, rotulo: 'novo lugar' });
+              setItemSel(null);
+            }}>Mover</button>
+          </div>
         </Folha>
       )}
     </div>
