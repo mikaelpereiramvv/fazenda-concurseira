@@ -6,7 +6,10 @@ import { chaveDia, formatarDuracao, somarDias } from '../domain/datas';
 import { MENSAGENS_ERRO, validarLancamento } from '../domain/lancamento';
 import { excluirSessao, registrarSessao } from '../domain/estado';
 import type { AppState, ResumoSessao } from '../domain/tipos';
-import { Folha, Icone, perguntar } from './comum';
+import { Folha, Icone, SeletorBanca, formatoDaBanca, pct, perguntar } from './comum';
+import { bancaPadrao } from './Hoje';
+import { desempenhoPorMateria, indiceFoco, metaSugerida, pontosFracos, relatorioSemana, ritmo, coberturaPonderada } from '../domain/desempenho';
+import { revisoesEmDia } from '../domain/revisoes';
 import { ResumoFinal } from './Fazenda';
 
 export function TelaEstatisticas({ s, avisar }: { s: AppState; avisar: (t: string) => void }) {
@@ -40,6 +43,8 @@ export function TelaEstatisticas({ s, avisar }: { s: AppState; avisar: (t: strin
         <div style={{ textAlign: 'right', color: 'var(--suave)', fontSize: 13 }}>🧊 {s.jogador.congeladores} congelador(es)</div>
       </div>
 
+      <SemanaPassada s={s} />
+
       <h2>Últimos 7 dias</h2>
       <div className="cartao grafico">
         <svg viewBox="0 0 320 150" role="img" aria-label="Minutos estudados por dia">
@@ -71,11 +76,13 @@ export function TelaEstatisticas({ s, avisar }: { s: AppState; avisar: (t: strin
           <div key={m.materia.id} className="lista-item">
             <span className="bolinha" style={{ background: m.materia.cor }} />
             <span style={{ flex: 1 }}>{m.materia.nome}</span>
-            {m.questoes > 0 && <span className="etiqueta">{Math.round((m.acertos / m.questoes) * 100)}% acertos</span>}
+            {m.questoes >= 20 && <span className="etiqueta">{Math.round((m.acertos / m.questoes) * 100)}% acertos</span>}
             <b>{formatarDuracao(m.min)}</b>
           </div>
         ))}
       </div>
+
+      <Desempenho s={s} />
 
       <h2>Constância (12 semanas)</h2>
       <div className="cartao">
@@ -127,6 +134,7 @@ function LancamentoManual({ s, aoFechar, aoSalvar }: { s: AppState; aoFechar: ()
   const [m, setM] = useState('0');
   const [questoes, setQuestoes] = useState('');
   const [acertos, setAcertos] = useState('');
+  const [banca, setBanca] = useState(bancaPadrao(s));
   const dur = (parseInt(h) || 0) * 60 + (parseInt(m) || 0);
   const inicio = new Date(`${data}T${hora || '00:00'}`);
   const v = validarLancamento({ materiaId, assuntoId: assuntoId || undefined, inicio, duracaoMin: dur }, s.sessoes);
@@ -162,10 +170,11 @@ function LancamentoManual({ s, aoFechar, aoSalvar }: { s: AppState; aoFechar: ()
             <label className="campo">Questões<input inputMode="numeric" value={questoes} onChange={(e) => setQuestoes(e.target.value.replace(/\D/g, ''))} placeholder="0" /></label>
             <label className="campo">Acertos<input inputMode="numeric" value={acertos} onChange={(e) => setAcertos(e.target.value.replace(/\D/g, ''))} placeholder="0" /></label>
           </div>
+          {(parseInt(questoes) || 0) > 0 && <SeletorBanca valor={banca} aoMudar={setBanca} />}
           {v.erros.map((e) => <p key={e} style={{ color: 'var(--perigo)', fontSize: 14, margin: '4px 0' }}>⚠ {MENSAGENS_ERRO[e]}</p>)}
           {v.avisos.map((a) => <p key={a} style={{ color: '#8a5a00', fontSize: 13, margin: '4px 0' }}>{a}</p>)}
           <p style={{ fontSize: 12, color: 'var(--suave)' }}>
-            Lançamento manual: 100% do XP e 50% das moedas.{data < limiteRecuperacao ? ' Datas com mais de 2 dias não recuperam a ofensiva.' : ''}
+            Lançamento manual: 100% do XP e 50% das moedas. Com assunto, conta para as revisões espaçadas.{data < limiteRecuperacao ? ' Datas com mais de 2 dias não recuperam a ofensiva.' : ''}
           </p>
           <button className="btn primario grande" disabled={v.erros.length > 0} onClick={() => {
             const q = parseInt(questoes) || 0;
@@ -174,6 +183,7 @@ function LancamentoManual({ s, aoFechar, aoSalvar }: { s: AppState; aoFechar: ()
               const r = registrarSessao(st, {
                 materiaId, assuntoId: assuntoId || undefined, inicio, duracaoMin: dur, origem: 'manual',
                 questoes: q || undefined, acertos: q ? Math.min(parseInt(acertos) || 0, q) : undefined,
+                banca: q && banca ? banca : undefined, formato: q ? formatoDaBanca(banca) : undefined,
               });
               res = r.resumo;
               return r.state;
@@ -183,5 +193,94 @@ function LancamentoManual({ s, aoFechar, aoSalvar }: { s: AppState; aoFechar: ()
         </>
       )}
     </Folha>
+  );
+}
+
+function SemanaPassada({ s }: { s: AppState }) {
+  const r = relatorioSemana(s);
+  if (r.minutos === 0 && r.questoes === 0) return null;
+  const nome = (id?: string) => s.materias.find((m) => m.id === id)?.nome;
+  return (
+    <div className="cartao relatorio">
+      <b>Semana passada</b>
+      <div className="grade-rel">
+        <div><span>{formatarDuracao(r.minutos)}</span><small>{pct(r.metaPct)} da meta</small></div>
+        <div><span>{r.dias}/7</span><small>dias estudados</small></div>
+        <div><span>{r.questoes}</span><small>questões · {pct(r.acerto)}</small></div>
+        <div><span>{r.revisoes}</span><small>revisões feitas</small></div>
+      </div>
+      {nome(r.maisEstudada) && <div style={{ fontSize: 13, marginTop: 6 }}>Mais estudada: <b>{nome(r.maisEstudada)}</b>{nome(r.menosEstudada) && r.menosEstudada !== r.maisEstudada ? <> · ficou para trás: <b>{nome(r.menosEstudada)}</b></> : null}</div>}
+    </div>
+  );
+}
+
+function Desempenho({ s }: { s: AppState }) {
+  const des = desempenhoPorMateria(s);
+  const fracos = pontosFracos(s);
+  const rit = ritmo(s);
+  const foco = indiceFoco(s);
+  const rev = revisoesEmDia(s);
+  const cob = coberturaPonderada(s);
+  const sugerida = metaSugerida(s);
+  const seta = (t: number | null) => (t === null ? '' : t > 0.02 ? ` ▲${Math.round(t * 100)}` : t < -0.02 ? ` ▼${Math.round(-t * 100)}` : ' =');
+  return (
+    <>
+      <h2>Desempenho (30 dias)</h2>
+      <div className="grade-cartoes">
+        <div className="mini"><div className="v">{rev.taxa === null ? '—' : pct(rev.taxa)}</div><div className="r">revisões em dia{rev.atrasadas ? ` · ${rev.atrasadas} atrasadas` : ''}</div></div>
+        <div className="mini"><div className="v">{cob === null ? '—' : pct(cob)}</div><div className="r">edital coberto</div></div>
+        <div className="mini"><div className="v">{foco.indice === null ? '—' : pct(foco.indice)}</div><div className="r">foco · {foco.saidasPorHora === null ? '—' : foco.saidasPorHora.toFixed(1)} saídas/h</div></div>
+      </div>
+      {rit.prova && (
+        <div className="cartao">
+          <b>Ritmo até {rit.prova.nome} ({rit.prova.dias} dias)</b>
+          <div style={{ fontSize: 14, marginTop: 6 }}>
+            Faltam <b>{rit.faltam}</b> assuntos sem questões. Para fechar com 2 semanas de revisão: <b>{rit.necessario?.toFixed(1)}</b>/semana.
+            Seu ritmo: <b>{rit.real.toFixed(1)}</b>/semana.
+          </div>
+          <div style={{ fontSize: 13, marginTop: 4, color: rit.necessario !== null && rit.real >= rit.necessario ? 'var(--mata)' : 'var(--perigo)' }}>
+            {rit.fechaEm ? `Nesse ritmo, fecha o edital em ${new Date(`${rit.fechaEm}T12:00`).toLocaleDateString('pt-BR')}.` : 'Ainda sem ritmo medido: estude assuntos do edital para projetar.'}
+          </div>
+        </div>
+      )}
+      <div className="cartao">
+        <b>Acerto por matéria</b>
+        <div style={{ fontSize: 12, color: 'var(--suave)', marginBottom: 6 }}>Ajustado pela amostra (com poucas questões fica perto de 70%). ▲▼ = tendência de 14 dias.</div>
+        {des.length === 0 && <div className="vazio" style={{ padding: 8 }}>Registre questões ao concluir as sessões para ver seu desempenho.</div>}
+        {des.map((d) => (
+          <div key={d.id} style={{ marginBottom: 8 }}>
+            <div className="linha" style={{ fontSize: 14 }}>
+              <span><span className="bolinha" style={{ background: d.cor, display: 'inline-block', marginRight: 6 }} />{d.nome}</span>
+              <span style={{ textAlign: 'right' }}>
+                <b>{pct(d.ajustado)}</b><span style={{ color: (d.tendencia ?? 0) >= 0 ? 'var(--mata)' : 'var(--perigo)' }}>{seta(d.tendencia)}</span>
+                <small style={{ color: 'var(--suave)' }}> · {d.q} q{d.liquido !== null ? ` · líquido ${pct(d.liquido)}` : ''}</small>
+              </span>
+            </div>
+            <div className="barra"><div style={{ width: `${d.ajustado * 100}%`, background: d.ajustado >= (s.ajustes.alvoAcerto ?? 0.8) ? 'var(--mata)' : d.cor }} /></div>
+          </div>
+        ))}
+      </div>
+      {fracos.length > 0 && (
+        <div className="cartao">
+          <b>Pontos fracos (onde a nota pode subir)</b>
+          {fracos.map((f, i) => (
+            <div key={f.id} className="lista-item">
+              <b style={{ flex: 'none', width: 18 }}>{i + 1}</b>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14 }}>{f.nome}</div>
+                <div style={{ fontSize: 12, color: 'var(--suave)' }}>{s.materias.find((m) => m.id === f.materiaId)?.nome} · {f.a}/{f.q} · incidência {['', 'baixa', 'média', 'alta'][f.peso] ?? f.peso}</div>
+              </div>
+              <b style={{ flex: 'none', color: 'var(--perigo)' }}>{pct(f.ajustado)}</b>
+            </div>
+          ))}
+        </div>
+      )}
+      {sugerida !== null && sugerida !== s.ajustes.metaDiariaMin && (
+        <div className="cartao linha">
+          <span>🎯 Meta diária sugerida pelos seus últimos 14 dias: <b>{formatarDuracao(sugerida)}</b> (hoje: {formatarDuracao(s.ajustes.metaDiariaMin)})</span>
+          <button className="btn" style={{ flex: 'none' }} onClick={() => atualizar((st) => ({ ...st, ajustes: { ...st.ajustes, metaDiariaMin: sugerida } }))}>Usar</button>
+        </div>
+      )}
+    </>
   );
 }

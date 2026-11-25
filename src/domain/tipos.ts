@@ -12,6 +12,12 @@ export interface Materia {
   metaCicloMin: number;
   ativa: boolean;
   ordem: number;
+  /** Nº de questões desta matéria na prova (para o ciclo automático). */
+  questoesProva?: number;
+  /** Peso de cada questão na prova (padrão 1). */
+  pesoProva?: number;
+  /** 1 = fácil, 2 = média, 3 = difícil para você. */
+  dificuldade?: 1 | 2 | 3;
 }
 
 export interface Assunto {
@@ -19,6 +25,79 @@ export interface Assunto {
   materiaId: string;
   nome: string;
   status: StatusAssunto;
+  /** Incidência na prova: 1 baixa, 2 média, 3 alta (padrão 2). */
+  peso?: number;
+  estudadoEm?: string;
+  revisoesFeitas?: number;
+}
+
+export type Banca = string;
+export type FormatoQuestao = 'certo_errado' | 'multipla';
+
+export interface Concurso {
+  id: string;
+  nome: string;
+  banca?: Banca;
+  /** 'YYYY-MM-DD' */
+  dataProva?: string;
+  ativo: boolean;
+}
+
+export interface Revisao {
+  id: string;
+  assuntoId: string;
+  materiaId: string;
+  /** 0 = primeira revisão (D+1), 1 = D+7, ... */
+  etapa: number;
+  intervaloDias: number;
+  /** 'YYYY-MM-DD' */
+  devidaEm: string;
+  feitaEm?: string;
+  questoes?: number;
+  acertos?: number;
+  moedas?: number;
+}
+
+export interface BlocoQuestoes {
+  id: string;
+  sessaoId?: string;
+  simuladoId?: string;
+  em: string;
+  materiaId: string;
+  assuntoId?: string;
+  banca?: Banca;
+  formato?: FormatoQuestao;
+  feitas: number;
+  acertos: number;
+  brancos?: number;
+}
+
+export type MotivoErro = 'conteudo' | 'interpretacao' | 'atencao' | 'pegadinha' | 'chute';
+
+export interface ItemErro {
+  id: string;
+  materiaId: string;
+  assuntoId?: string;
+  banca?: Banca;
+  enunciado: string;
+  explicacao?: string;
+  motivo: MotivoErro;
+  criadoEm: string;
+  caixa: number;
+  /** 'YYYY-MM-DD' */
+  proximaEm: string;
+  resolvidoEm?: string;
+  revisoes?: number;
+}
+
+export interface Simulado {
+  id: string;
+  em: string;
+  nome: string;
+  concursoId?: string;
+  duracaoMin: number;
+  porMateria: { materiaId: string; feitas: number; acertos: number; brancos?: number }[];
+  notaCorte?: number;
 }
 
 export interface Sessao {
@@ -39,6 +118,11 @@ export interface Sessao {
   xp: number;
   moedas: number;
   penalizada?: boolean;
+  /** Qualidade da sessão (cronômetro): tempo bruto, nº de pausas e de saídas do app. */
+  brutoMin?: number;
+  pausasQtd?: number;
+  saidas?: number;
+  banca?: Banca;
 }
 
 export interface Pausa {
@@ -119,6 +203,8 @@ export interface Ajustes {
   sons?: boolean;
   /** Durante a sessão: só o relógio, sem ver a fazenda. */
   sessaoTelaMinima?: boolean;
+  /** Meta de acerto usada para pontos fracos (padrão 0,8). */
+  alvoAcerto?: number;
 }
 
 export interface Registro {
@@ -134,11 +220,18 @@ export interface Registro {
   cartasLidas?: string[];
   /** Itens exclusivos ganhos em missões, ainda não colocados na fazenda. */
   inventario?: Record<string, number>;
+  /** assuntoId → data do último bônus "ponto fraco melhorou". */
+  bonusPontoFraco?: Record<string, string>;
+  /** dia → moedas pagas por erros revisados/questões (limites diários). */
+  errosPagosDia?: Record<string, number>;
 }
 
 export interface Ciclo {
   rodada: number;
   progresso: Record<string, number>;
+  /** Minutos totais de uma volta (para o ciclo automático). */
+  minutosPorVolta?: number;
+  inicioRodadaEm?: string;
 }
 
 export interface AppState {
@@ -154,6 +247,11 @@ export interface AppState {
   ajustes: Ajustes;
   registro: Registro;
   sessaoAtiva?: SessaoAtiva;
+  concursos?: Concurso[];
+  revisoes?: Revisao[];
+  blocos?: BlocoQuestoes[];
+  erros?: ItemErro[];
+  simulados?: Simulado[];
 }
 
 export interface LinhaRecompensa {

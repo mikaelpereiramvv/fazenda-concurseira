@@ -4,6 +4,12 @@ Gestão de estudos estilo concurseiro (cronômetro, lançamento manual, ciclo de
 
 **Stack:** Capacitor 8 · React 19 · Phaser 3 · TypeScript · Vite · Vitest. Código nativo mínimo em Swift (compilado só no GitHub Actions).
 
+## O que tem (v0.3)
+
+**Estudos:** cronômetro livre/Pomodoro com assunto, lançamento manual (só passado/hoje), ciclo de estudos com excedente e sugestão da matéria mais atrasada, **ciclo automático** por peso × dificuldade × desempenho, edital verticalizado com incidência, **revisões espaçadas** (1-7-30-60-120 dias ajustadas pelo acerto), painel **Hoje**, **caderno de erros** (Leitner), questões por assunto e **banca**, **simulados** com evolução, **provas** (PC-AL, PM-AL, PC-PE) com contagem regressiva e **ritmo** para fechar o edital, desempenho com **acerto ajustado**, tendência, **pontos fracos**, cobertura ponderada, índice de **foco**, relatório semanal, meta adaptativa e exportação **CSV**.
+
+**Fazenda:** câmera que enquadra o terreno, céu com dia/noite pela hora real, sombras, "pop" ao comprar, plantas que crescem com animação depois do estudo, colheita com partículas, animais passeando, sessão contemplativa, resumo animado, sons opcionais, **enredo** da Vó Benedita com missões ligadas ao estudo, cartas e itens exclusivos, e **mato no canteiro** quando a revisão atrasa mais de 3 dias.
+
 ## Começo rápido (Windows)
 
 ```bash

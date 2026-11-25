@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { atualizar, iniciarStore, useApp } from './store';
 import { TelaFazenda, type PedidoColocacao } from './ui/Fazenda';
 import { TelaEstatisticas } from './ui/Estatisticas';
-import { TelaEstudos } from './ui/Estudos';
+import { TelaEstudos, type SecaoEstudos } from './ui/Estudos';
+import { revisoesAtrasadas } from './domain/revisoes';
 import { TelaLoja } from './ui/Loja';
 import { TelaAjustes } from './ui/Ajustes';
 import { Dialogos, Toast } from './ui/comum';
@@ -25,6 +26,12 @@ export default function App() {
   const [aba, setAba] = useState<Aba>('fazenda');
   const [toast, setToast] = useState<string | null>(null);
   const [colocacao, setColocacao] = useState<PedidoColocacao | null>(null);
+  const [secaoEstudos, setSecaoEstudos] = useState<SecaoEstudos>('hoje');
+  const [pre, setPre] = useState<{ materiaId: string; assuntoId?: string } | null>(null);
+  const estudar = useCallback((materiaId: string, assuntoId?: string) => {
+    setPre({ materiaId, assuntoId });
+    setAba('fazenda');
+  }, []);
   const avisar = useCallback((t: string) => setToast(t), []);
   const fecharToast = useCallback(() => setToast(null), []);
 
@@ -53,9 +60,12 @@ export default function App() {
   return (
     <div className="app">
       <div className="conteudo">
-        {aba === 'fazenda' && <TelaFazenda s={s} avisar={avisar} colocacao={colocacao} setColocacao={setColocacao} irPara={(a) => setAba(a)} />}
+        {aba === 'fazenda' && (
+          <TelaFazenda s={s} avisar={avisar} colocacao={colocacao} setColocacao={setColocacao}
+            irPara={(a) => { setSecaoEstudos('hoje'); setAba(a); }} ervas={revisoesAtrasadas(s)} pre={pre} />
+        )}
         {aba === 'estatisticas' && <TelaEstatisticas s={s} avisar={avisar} />}
-        {aba === 'estudos' && <TelaEstudos s={s} />}
+        {aba === 'estudos' && <TelaEstudos s={s} avisar={avisar} estudar={estudar} secao={secaoEstudos} setSecao={setSecaoEstudos} />}
         {aba === 'loja' && <TelaLoja s={s} avisar={avisar} colocar={(c) => { setColocacao(c); setAba('fazenda'); }} />}
         {aba === 'ajustes' && <TelaAjustes s={s} avisar={avisar} />}
       </div>

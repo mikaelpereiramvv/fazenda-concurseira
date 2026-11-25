@@ -1,6 +1,7 @@
 import { atualizar, salvarAgora, substituir } from '../store';
 import { estadoInicial, gerarBackup, lerBackup } from '../domain/estado';
 import { chaveDia, diffDias } from '../domain/datas';
+import { csvQuestoes, csvSessoes } from '../domain/desempenho';
 import type { Ajustes, AppState } from '../domain/tipos';
 import { ehNativo, escolherArquivo, exportarArquivo, rodarAtalho } from '../platform/nativo';
 import { Chave, perguntar } from './comum';
@@ -30,6 +31,10 @@ export function TelaAjustes({ s, avisar }: { s: AppState; avisar: (t: string) =>
       <div className="cartao">
         <Chave rotulo="Meta diária (min)" dica="Padrão: 120 min (2 h)">{num('metaDiariaMin', 10)}</Chave>
         <Chave rotulo="Meta semanal (min)">{num('metaSemanalMin', 30, 10080)}</Chave>
+        <Chave rotulo="Alvo de acerto (%)" dica="Abaixo disso o assunto vira ponto fraco">
+          <input type="number" inputMode="numeric" value={Math.round((a.alvoAcerto ?? 0.8) * 100)} min={50} max={100}
+            onChange={(e) => set('alvoAcerto', Math.max(50, Math.min(100, parseInt(e.target.value) || 80)) / 100)} />
+        </Chave>
       </div>
 
       <h2>Timer</h2>
@@ -116,6 +121,15 @@ export function TelaAjustes({ s, avisar }: { s: AppState; avisar: (t: string) =>
         </div>
       </div>
 
+      <h2>Planilhas (CSV)</h2>
+      <div className="cartao">
+        <p style={{ marginTop: 0, fontSize: 14 }}>Abra no Excel, Google Planilhas ou Numbers.</p>
+        <div className="linha">
+          <button className="btn" onClick={() => exportarArquivo(`fazenda-sessoes-${chaveDia(new Date())}.csv`, csvSessoes(s), 'text/csv')}>Sessões</button>
+          <button className="btn" onClick={() => exportarArquivo(`fazenda-questoes-${chaveDia(new Date())}.csv`, csvQuestoes(s), 'text/csv')}>Questões</button>
+        </div>
+      </div>
+
       <h2>Zona de perigo</h2>
       <div className="cartao">
         <button className="btn perigo grande" onClick={async () => {
@@ -126,7 +140,7 @@ export function TelaAjustes({ s, avisar }: { s: AppState; avisar: (t: string) =>
           avisar('Tudo zerado. Fazenda nova!');
         }}>Apagar todos os dados</button>
       </div>
-      <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--suave)' }}>Fazenda Concurseira v0.1 · 100% offline · {ehNativo ? 'iPhone' : 'navegador'}</p>
+      <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--suave)' }}>Fazenda Concurseira v0.3 · 100% offline · {ehNativo ? 'iPhone' : 'navegador'}</p>
     </div>
   );
 }

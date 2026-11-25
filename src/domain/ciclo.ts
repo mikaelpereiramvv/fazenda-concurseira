@@ -17,10 +17,24 @@ export function itensCiclo(state: Pick<AppState, 'materias' | 'ciclo'>): ItemCic
     });
 }
 
-/** Próxima matéria sugerida: a primeira (na ordem) que ainda não completou a meta da volta. */
-export function proximaMateria(state: Pick<AppState, 'materias' | 'ciclo'>): Materia | undefined {
+/**
+ * Próxima matéria sugerida: a mais atrasada EM PROPORÇÃO na volta atual;
+ * empate → a que está há mais tempo sem estudo; depois a ordem do ciclo.
+ */
+export function proximaMateria(state: Pick<AppState, 'materias' | 'ciclo'> & { sessoes?: AppState['sessoes'] }): Materia | undefined {
   const itens = itensCiclo(state);
-  return itens.find((i) => i.fracao < 1)?.materia ?? itens[0]?.materia;
+  if (!itens.length) return undefined;
+  const ultimo = new Map<string, string>();
+  for (const x of state.sessoes ?? []) if ((ultimo.get(x.materiaId) ?? '') < x.inicio) ultimo.set(x.materiaId, x.inicio);
+  const ordenados = [...itens].sort((a, b) =>
+    a.fracao - b.fracao || (ultimo.get(a.materia.id) ?? '').localeCompare(ultimo.get(b.materia.id) ?? '') || a.materia.ordem - b.materia.ordem);
+  return ordenados[0].materia;
+}
+
+/** Desfaz minutos do ciclo (ex.: sessão excluída). */
+export function estornarCiclo(state: AppState, materiaId: string, minutos: number): AppState {
+  const atual = state.ciclo.progresso[materiaId] ?? 0;
+  return { ...state, ciclo: { ...state.ciclo, progresso: { ...state.ciclo.progresso, [materiaId]: Math.max(0, atual - minutos) } } };
 }
 
 export function progressoCiclo(state: Pick<AppState, 'materias' | 'ciclo'>): number {
@@ -36,6 +50,11 @@ export function registrarNoCiclo(state: AppState, materiaId: string, minutos: nu
   let novo: AppState = { ...state, ciclo: { ...state.ciclo, progresso } };
   const itens = itensCiclo(novo);
   const completa = itens.length > 0 && itens.every((i) => i.fracao >= 1);
-  if (completa) novo = { ...novo, ciclo: { rodada: state.ciclo.rodada + 1, progresso: {} } };
+  if (completa) {
+    // o que passou da meta vai para a próxima volta (não se perde)
+    const excedente: Record<string, number> = {};
+    for (const i of itens) if (i.feitoMin > i.metaMin) excedente[i.materia.id] = i.feitoMin - i.metaMin;
+    novo = { ...novo, ciclo: { ...novo.ciclo, rodada: state.ciclo.rodada + 1, progresso: excedente, inicioRodadaEm: new Date().toISOString() } };
+  }
   return { state: novo, voltaCompleta: completa };
 }

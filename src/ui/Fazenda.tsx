@@ -19,7 +19,10 @@ import {
 } from '../sessao';
 import { tocar } from '../platform/sons';
 import { vibrar } from '../platform/nativo';
-import { Folha, Icone, Moedas, perguntar, useContagem } from './comum';
+import { Folha, Icone, Moedas, SeletorBanca, formatoDaBanca, perguntar, useContagem } from './comum';
+import { bancaPadrao } from './Hoje';
+import { revisoesDoDia } from '../domain/revisoes';
+import { proximaProva } from '../domain/desempenho';
 import { Correio } from './Correio';
 
 export type PedidoColocacao =
@@ -35,6 +38,8 @@ interface Props {
   irPara: (aba: 'estudos') => void;
   /** Quantas ervas daninhas mostrar (revisões atrasadas). */
   ervas?: number;
+  /** Matéria/assunto pré-selecionados (vindo de "Estudar agora" numa revisão). */
+  pre?: { materiaId: string; assuntoId?: string } | null;
 }
 
 /** Mede a altura de um elemento (para a câmera não esconder o terreno atrás da interface). */
@@ -51,7 +56,7 @@ function useAltura<T extends HTMLElement>(): [(el: T | null) => void, number] {
   return [ref, h];
 }
 
-export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara, ervas = 0 }: Props) {
+export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara, ervas = 0, pre = null }: Props) {
   const nivel = nivelDeXp(s.jogador.xp);
   const ofensiva = calcularOfensiva(s);
   const [canteiroSel, setCanteiroSel] = useState<ItemFazenda | null>(null);
@@ -156,7 +161,7 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara, ervas 
           <button className="btn" style={{ flex: 'none' }} onClick={() => setColocacao(null)}>Concluir</button>
         </div>
       ) : !emSessao ? (
-        <div className="painel-wrap" ref={refPainel}><PainelIniciar s={s} irPara={irPara} /></div>
+        <div className="painel-wrap" ref={refPainel}><PainelIniciar s={s} irPara={irPara} pre={pre} /></div>
       ) : null}
 
       {emSessao && <SessaoEmAndamento s={s} avisar={avisar} aoConcluir={(r) => { setResumo(r); tocar(r.nivelDepois > r.nivelAntes ? 'nivel' : 'moeda', sons); }} />}
@@ -227,13 +232,21 @@ function InfoCultura({ item }: { item: ItemFazenda }) {
   );
 }
 
-function PainelIniciar({ s, irPara }: { s: AppState; irPara: (a: 'estudos') => void }) {
+function PainelIniciar({ s, irPara, pre }: { s: AppState; irPara: (a: 'estudos') => void; pre: { materiaId: string; assuntoId?: string } | null }) {
   const sugerida = proximaMateria(s);
   const ativas = s.materias.filter((m) => m.ativa);
-  const [materiaId, setMateriaId] = useState(sugerida?.id ?? '');
+  const [materiaId, setMateriaId] = useState(pre?.materiaId ?? sugerida?.id ?? '');
+  const [assuntoId, setAssuntoId] = useState(pre?.assuntoId ?? '');
   const [modo, setModo] = useState<ModoTimer>('pomodoro');
   const [saida, setSaida] = useState(false);
-  useEffect(() => { if (!ativas.some((m) => m.id === materiaId)) setMateriaId(sugerida?.id ?? ''); }, [sugerida?.id, ativas, materiaId]);
+  useEffect(() => { if (pre) { setMateriaId(pre.materiaId); setAssuntoId(pre.assuntoId ?? ''); } }, [pre]);
+  useEffect(() => {
+    if (!s.materias.some((m) => m.id === materiaId)) setMateriaId(sugerida?.id ?? '');
+  }, [sugerida?.id, s.materias, materiaId]);
+  const assuntos = s.assuntos.filter((a) => a.materiaId === materiaId);
+  const revs = revisoesDoDia(s);
+  const revDoAssunto = assuntoId ? revs.find((r) => r.assuntoId === assuntoId) : undefined;
+  const prova = proximaProva(s);
 
   if (ativas.length === 0) {
     return (
@@ -245,23 +258,33 @@ function PainelIniciar({ s, irPara }: { s: AppState; irPara: (a: 'estudos') => v
   }
   return (
     <div className="painel-estudo">
-      {sugerida && <div className="sugestao">Próxima do ciclo: <b>{sugerida.nome}</b></div>}
-      <div className="linha" style={{ marginBottom: 10 }}>
-        <select className="btn" style={{ flex: 2, textAlign: 'left' }} value={materiaId} onChange={(e) => setMateriaId(e.target.value)}>
-          {ativas.map((m) => <option key={m.id} value={m.id}>{m.nome}</option>)}
+      <div className="faixa-hoje">
+        {prova && <span>📅 {prova.nome} em <b>{prova.dias}</b> dia{prova.dias === 1 ? '' : 's'}</span>}
+        {revs.length > 0 && <button onClick={() => irPara('estudos')}>🔁 <b>{revs.length}</b> revisão(ões) hoje</button>}
+        {!prova && !revs.length && sugerida && <span>Próxima do ciclo: <b>{sugerida.nome}</b></span>}
+      </div>
+      <div className="linha" style={{ marginBottom: 8 }}>
+        <select className="btn" style={{ flex: 2, textAlign: 'left' }} value={materiaId} onChange={(e) => { setMateriaId(e.target.value); setAssuntoId(''); }}>
+          {ativas.map((m) => <option key={m.id} value={m.id}>{m.id === sugerida?.id ? '★ ' : ''}{m.nome}</option>)}
         </select>
         <div className="segmentos" style={{ flex: 2 }}>
           <button className={modo === 'pomodoro' ? 'ativo' : ''} onClick={() => setModo('pomodoro')}>🍅 {s.ajustes.pomodoroMin}′</button>
           <button className={modo === 'livre' ? 'ativo' : ''} onClick={() => setModo('livre')}>Livre</button>
         </div>
       </div>
+      {assuntos.length > 0 && (
+        <select className="btn" style={{ width: '100%', textAlign: 'left', marginBottom: 8, fontWeight: 500 }} value={assuntoId} onChange={(e) => setAssuntoId(e.target.value)}>
+          <option value="">Assunto (opcional)</option>
+          {assuntos.map((a) => <option key={a.id} value={a.id}>{revs.some((r) => r.assuntoId === a.id) ? '🔁 ' : ''}{a.nome}</option>)}
+        </select>
+      )}
       <label className="chave" style={{ paddingTop: 0 }}>
         <span>Vou estudar em outro app<small>PDF, Anki ou questões: sair do app não pune</small></span>
         <input type="checkbox" className="toggle" checked={saida} onChange={(e) => setSaida(e.target.checked)} />
       </label>
       <button className="btn primario grande" disabled={!materiaId}
-        onClick={() => iniciarSessao({ materiaId, modo, saidaAutorizada: saida })}>
-        Estudar
+        onClick={() => iniciarSessao({ materiaId, assuntoId: assuntoId || undefined, modo, saidaAutorizada: saida })}>
+        {revDoAssunto ? 'Estudar (conta como revisão)' : 'Estudar'}
       </button>
     </div>
   );
@@ -328,11 +351,12 @@ function SessaoEmAndamento({ s, avisar, aoConcluir }: { s: AppState; avisar: (t:
 
 function ConcluirSessao({ s, aoCancelar, aoSalvar }: {
   s: AppState; aoCancelar: () => void;
-  aoSalvar: (e: { assuntoId?: string; questoes?: number; acertos?: number }) => void;
+  aoSalvar: (e: { assuntoId?: string; questoes?: number; acertos?: number; banca?: string; formato?: 'certo_errado' | 'multipla' }) => void;
 }) {
   const d = dadosParaConcluir();
   const assuntos = s.assuntos.filter((x) => x.materiaId === d?.materiaId);
-  const [assuntoId, setAssuntoId] = useState<string>('');
+  const [assuntoId, setAssuntoId] = useState<string>(d?.assuntoId ?? '');
+  const [banca, setBanca] = useState(bancaPadrao(s));
   const [questoes, setQuestoes] = useState('');
   const [acertos, setAcertos] = useState('');
   const q = parseInt(questoes) || 0, ac = Math.min(parseInt(acertos) || 0, q);
@@ -351,10 +375,14 @@ function ConcluirSessao({ s, aoCancelar, aoSalvar }: {
           <label className="campo">Questões feitas<input inputMode="numeric" value={questoes} onChange={(e) => setQuestoes(e.target.value.replace(/\D/g, ''))} placeholder="0" /></label>
           <label className="campo">Acertos<input inputMode="numeric" value={acertos} onChange={(e) => setAcertos(e.target.value.replace(/\D/g, ''))} placeholder="0" /></label>
         </div>
+        {q > 0 && <SeletorBanca valor={banca} aoMudar={setBanca} />}
+        {q > 0 && d && q > Math.floor((d.minutos * 60) / ECONOMIA.estudo.segMinPorQuestao) && (
+          <p style={{ fontSize: 13, color: '#8a5a00' }}>Mais de 1 questão a cada {ECONOMIA.estudo.segMinPorQuestao} s: tudo entra nas métricas, mas só {Math.floor((d.minutos * 60) / ECONOMIA.estudo.segMinPorQuestao)} rendem moedas.</p>
+        )}
         {d && d.minutos < ECONOMIA.moedas.sessaoMinimaParaMoedasMin && (
           <p style={{ fontSize: 13, color: 'var(--suave)' }}>Sessões com menos de {ECONOMIA.moedas.sessaoMinimaParaMoedasMin} min contam XP, mas não dão moedas por minuto.</p>
         )}
-        <button className="btn primario grande" onClick={() => aoSalvar({ assuntoId: assuntoId || undefined, questoes: q || undefined, acertos: q ? ac : undefined })}>
+        <button className="btn primario grande" onClick={() => aoSalvar({ assuntoId: assuntoId || undefined, questoes: q || undefined, acertos: q ? ac : undefined, banca: q && banca ? banca : undefined, formato: q ? formatoDaBanca(banca) : undefined })}>
           Salvar e colher recompensas
         </button>
       </div>

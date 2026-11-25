@@ -96,3 +96,22 @@ export function useContagem(alvo: number, duracao = 700, inicial?: number): numb
   }, [alvo, duracao]);
   return v;
 }
+
+export const BANCAS = ['Cebraspe', 'FGV', 'IBFC', 'Instituto AOCP', 'IDECAN', 'Vunesp', 'FCC', 'Cesgranrio', 'Consulplan', 'Quadrix', 'IBADE', 'Instituto Access', 'Outra'];
+
+/** Formato padrão pela banca: Cebraspe = certo/errado. */
+export const formatoDaBanca = (b?: string): 'certo_errado' | 'multipla' | undefined =>
+  !b ? undefined : b === 'Cebraspe' ? 'certo_errado' : 'multipla';
+
+export function SeletorBanca({ valor, aoMudar }: { valor: string; aoMudar: (v: string) => void }) {
+  return (
+    <label className="campo">Banca (opcional)
+      <select value={valor} onChange={(e) => aoMudar(e.target.value)}>
+        <option value="">—</option>
+        {BANCAS.map((b) => <option key={b} value={b}>{b}</option>)}
+      </select>
+    </label>
+  );
+}
+
+export const pct = (x: number | null | undefined, casas = 0) => (x === null || x === undefined ? '—' : `${(x * 100).toFixed(casas)}%`);

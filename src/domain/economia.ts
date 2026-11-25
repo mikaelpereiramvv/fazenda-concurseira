@@ -33,6 +33,13 @@ export interface Economia {
   animais: Animal[];
   construcoes: Construcao[];
   missoes: { diaria: number; semanal: number; manualConta: number };
+  estudo: {
+    porQuestao: number; maxQuestoesPagasDia: number; segMinPorQuestao: number;
+    porRevisaoNoPrazo: number; maxRevisoesPagasDia: number; porErroRevisado: number; maxErrosPagosDia: number;
+    bonusPontoFracoMelhorou: number; bonusFoco: number; focoMinIndice: number; focoMinMin: number;
+    intervalosRevisao: number[]; intervaloMaxDias: number; intervalosErros: number[];
+    alvoAcertoPadrao: number; amostraMinima: number; priorAcerto: number; priorPeso: number; atrasoErvaDias: number;
+  };
 }
 
 export const ECONOMIA = bruto as unknown as Economia;

@@ -2,11 +2,19 @@ import { ECONOMIA, animal } from './economia';
 import { chaveDia, chaveSemana, diffDias, novoId } from './datas';
 import { bonusSubidaNivel, nivelDeXp } from './niveis';
 import { calcularOfensiva, multiplicadorOfensiva } from './ofensiva';
-import { registrarNoCiclo } from './ciclo';
+import { estornarCiclo, registrarNoCiclo } from './ciclo';
+import { aplicarEstudoNoAssunto } from './revisoes';
+import { tendenciaAssunto } from './desempenho';
 import { crescerCulturas, murcharCulturas } from './fazenda';
-import type { AppState, Ajustes, ItemFazenda, LinhaRecompensa, ResumoSessao, Sessao } from './tipos';
+import type { AppState, Ajustes, BlocoQuestoes, Concurso, FormatoQuestao, ItemFazenda, LinhaRecompensa, ResumoSessao, Sessao } from './tipos';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
+
+export const CONCURSOS_PADRAO: Concurso[] = [
+  { id: 'pc-al', nome: 'PC-AL', ativo: true },
+  { id: 'pm-al', nome: 'PM-AL', ativo: true },
+  { id: 'pc-pe', nome: 'PC-PE', ativo: true },
+];
 
 export const AJUSTES_PADRAO: Ajustes = {
   metaDiariaMin: 120,
@@ -51,6 +59,8 @@ export function estadoInicial(agora = new Date()): AppState {
       marcosCongeladorGratis: [], tentativas: [],
       missoesResgatadas: [], cartasLidas: [], inventario: {},
     },
+    concursos: CONCURSOS_PADRAO.map((c) => ({ ...c })),
+    revisoes: [], blocos: [], erros: [], simulados: [],
   };
 }
 
@@ -65,6 +75,11 @@ export interface NovaSessao {
   questoes?: number;
   acertos?: number;
   penalizada?: boolean;
+  banca?: string;
+  formato?: FormatoQuestao;
+  brutoMin?: number;
+  pausasQtd?: number;
+  saidas?: number;
 }
 
 /**
@@ -92,12 +107,21 @@ export function registrarSessao(state: AppState, nova: NovaSessao, agora = new D
   }
   if (cron && dur >= 60) linhas.push({ motivo: 'Sessão de 1 h ou mais', moedas: eco.moedas.bonusSessao60Min });
 
-  // acertos (limite diário)
-  if (nova.acertos && nova.acertos > 0) {
+  // questões: paga por FAZER (não pelo acerto), só o que é plausível no tempo, com teto diário
+  const est = eco.estudo;
+  const q = Math.max(0, nova.questoes ?? 0);
+  let questoesPagas = 0;
+  if (q > 0 && dur > 0) {
+    const plausivel = Math.floor((dur * 60) / est.segMinPorQuestao);
     const dia = chaveDia(nova.inicio);
-    const jaPagos = state.sessoes.filter((s) => chaveDia(s.inicio) === dia).reduce((a, s) => a + (s.acertos ?? 0), 0);
-    const pagaveis = Math.max(0, Math.min(nova.acertos, eco.moedas.maxAcertosPagosPorDia - jaPagos));
-    if (pagaveis > 0) linhas.push({ motivo: `${pagaveis} acerto(s) em questões`, moedas: pagaveis * eco.moedas.porAcerto });
+    const jaPagas = state.sessoes.filter((x) => chaveDia(x.inicio) === dia).reduce((a, x) => a + Math.min(x.questoes ?? 0, Math.floor((x.duracaoMin * 60) / est.segMinPorQuestao)), 0);
+    questoesPagas = Math.max(0, Math.min(q, plausivel, est.maxQuestoesPagasDia - jaPagas));
+    const valor = Math.floor(questoesPagas * est.porQuestao * (cron ? 1 : 0.5));
+    if (valor > 0) linhas.push({ motivo: `${questoesPagas} questão(ões) resolvida(s)${cron ? '' : ' (manual, 50%)'}`, moedas: valor });
+  }
+  // foco: sessão de cronômetro sem sair do app e quase sem pausas
+  if (cron && dur >= est.focoMinMin && (nova.saidas ?? 0) === 0 && nova.brutoMin && dur / nova.brutoMin >= est.focoMinIndice) {
+    linhas.push({ motivo: 'Foco total (sem sair do app) 🎯', moedas: est.bonusFoco });
   }
 
   const sessao: Sessao = {
@@ -115,9 +139,39 @@ export function registrarSessao(state: AppState, nova: NovaSessao, agora = new D
     penalizada: nova.penalizada,
     xp: dur,
     moedas: 0,
+    ...(nova.brutoMin !== undefined ? { brutoMin: Math.round(nova.brutoMin) } : {}),
+    ...(nova.pausasQtd !== undefined ? { pausasQtd: nova.pausasQtd } : {}),
+    ...(nova.saidas !== undefined ? { saidas: nova.saidas } : {}),
+    ...(nova.banca ? { banca: nova.banca } : {}),
   };
 
   let s: AppState = { ...state, sessoes: [...state.sessoes, sessao] };
+
+  // bloco de questões (fonte das métricas de desempenho)
+  if (q > 0) {
+    const bloco: BlocoQuestoes = {
+      id: novoId(), sessaoId: sessao.id, em: sessao.inicio, materiaId: nova.materiaId, assuntoId: nova.assuntoId,
+      feitas: q, acertos: Math.min(q, Math.max(0, nova.acertos ?? 0)), banca: nova.banca, formato: nova.formato,
+    };
+    s = { ...s, blocos: [...(s.blocos ?? []), bloco] };
+  }
+
+  // revisões espaçadas do assunto
+  if (nova.assuntoId) {
+    const r = aplicarEstudoNoAssunto(s, {
+      assuntoId: nova.assuntoId, materiaId: nova.materiaId, quando: nova.inicio, minutos: dur,
+      questoes: q || undefined, acertos: q ? nova.acertos : undefined, manual: !cron,
+    }, agora);
+    s = r.state;
+    if (r.moedas > 0) linhas.push({ motivo: 'Revisão espaçada no prazo 🔁', moedas: r.moedas });
+    // ponto fraco que melhorou (≥ +10 p.p., amostra mínima nas duas janelas, 1× a cada 30 dias por assunto)
+    const t = tendenciaAssunto(s, nova.assuntoId, agora);
+    const ultimo = s.registro.bonusPontoFraco?.[nova.assuntoId];
+    if (t !== null && t >= 0.1 && (!ultimo || diffDias(ultimo, agora) >= 30)) {
+      linhas.push({ motivo: 'Ponto fraco melhorou! 📈', moedas: eco.estudo.bonusPontoFracoMelhorou });
+      s = { ...s, registro: { ...s.registro, bonusPontoFraco: { ...(s.registro.bonusPontoFraco ?? {}), [nova.assuntoId]: chaveDia(agora) } } };
+    }
+  }
 
   // XP e níveis
   const nivelAntes = nivelDeXp(state.jogador.xp).nivel;
@@ -182,8 +236,14 @@ export function registrarSessao(state: AppState, nova: NovaSessao, agora = new D
 }
 
 export function excluirSessao(state: AppState, id: string): AppState {
-  // XP e moedas já ganhos não são estornados (evita moedas negativas); só some do histórico.
-  return { ...state, sessoes: state.sessoes.filter((s) => s.id !== id) };
+  // XP e moedas já ganhos não são estornados (evita moedas negativas).
+  // O progresso no ciclo é estornado se a sessão contou para a volta atual; o bloco de questões sai junto.
+  const alvo = state.sessoes.find((s) => s.id === id);
+  if (!alvo) return state;
+  let s: AppState = { ...state, sessoes: state.sessoes.filter((x) => x.id !== id), blocos: (state.blocos ?? []).filter((b) => b.sessaoId !== id) };
+  const daVoltaAtual = !state.ciclo.inicioRodadaEm || alvo.criadaEm >= state.ciclo.inicioRodadaEm;
+  if (daVoltaAtual && diffDias(alvo.inicio, alvo.criadaEm) <= 2) s = estornarCiclo(s, alvo.materiaId, alvo.duracaoMin);
+  return s;
 }
 
 export function aplicarPenalidadeSaida(state: AppState, app = 'fora do app'): { state: AppState; murchas: number } {
@@ -223,15 +283,52 @@ export function lerBackup(texto: string): { ok: true; state: AppState; resumo: s
   return { ok: true, state, resumo: `${state.sessoes.length} sessões, nível ${nivel}, ${state.jogador.moedas} moedas` };
 }
 
-/** Migrações entre versões do esquema + preenchimento de campos novos. */
+/**
+ * Migrações entre versões do esquema + preenchimento de campos novos. Idempotente e sem perda:
+ * v1 → v2: cria blocos de questões a partir das sessões antigas, agenda revisão para assuntos já
+ * "revisados", cadastra os concursos padrão e inicializa as coleções novas.
+ */
 export function migrar(dados: AppState): AppState {
   const base = estadoInicial();
-  return {
+  let s: AppState = {
     ...base,
     ...dados,
     ajustes: { ...AJUSTES_PADRAO, ...(dados.ajustes ?? {}) },
     registro: { ...base.registro, ...(dados.registro ?? {}) },
     ciclo: dados.ciclo ?? base.ciclo,
-    schemaVersion: SCHEMA_VERSION,
+    concursos: dados.concursos ?? base.concursos,
+    revisoes: dados.revisoes ?? [],
+    blocos: dados.blocos ?? [],
+    erros: dados.erros ?? [],
+    simulados: dados.simulados ?? [],
   };
+  // blocos a partir de sessões antigas com questões (não duplica se rodar de novo)
+  const comBloco = new Set((s.blocos ?? []).map((b) => b.sessaoId).filter(Boolean));
+  const novos: BlocoQuestoes[] = s.sessoes
+    .filter((x) => (x.questoes ?? 0) > 0 && !comBloco.has(x.id))
+    .map((x) => ({ id: `mig-${x.id}`, sessaoId: x.id, em: x.inicio, materiaId: x.materiaId, assuntoId: x.assuntoId, feitas: x.questoes!, acertos: Math.min(x.questoes!, x.acertos ?? 0), banca: x.banca }));
+  if (novos.length) s = { ...s, blocos: [...(s.blocos ?? []), ...novos] };
+  // assuntos marcados como "revisado" antes das revisões existirem: agenda a próxima em 7 dias
+  const comRevisao = new Set((s.revisoes ?? []).map((r) => r.assuntoId));
+  const hoje = new Date();
+  const agendadas = s.assuntos
+    .filter((a) => a.status === 'revisado' && !comRevisao.has(a.id))
+    .map((a) => ({
+      id: `mig-${a.id}`, assuntoId: a.id, materiaId: a.materiaId, etapa: 1, intervaloDias: 7,
+      devidaEm: chaveDia(new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 7)),
+    }));
+  if (agendadas.length) {
+    s = {
+      ...s,
+      revisoes: [...(s.revisoes ?? []), ...agendadas],
+      assuntos: s.assuntos.map((a) => (a.status === 'revisado' && a.revisoesFeitas === undefined ? { ...a, revisoesFeitas: 1 } : a)),
+    };
+  }
+  // data do 1º estudo de cada assunto (para o ritmo), a partir das sessões antigas
+  const primeiro = new Map<string, string>();
+  for (const x of s.sessoes) if (x.assuntoId && (!primeiro.has(x.assuntoId) || x.inicio < primeiro.get(x.assuntoId)!)) primeiro.set(x.assuntoId, x.inicio);
+  if ([...primeiro.keys()].some((id) => s.assuntos.find((a) => a.id === id && !a.estudadoEm))) {
+    s = { ...s, assuntos: s.assuntos.map((a) => (!a.estudadoEm && primeiro.has(a.id) ? { ...a, estudadoEm: primeiro.get(a.id) } : a)) };
+  }
+  return { ...s, schemaVersion: SCHEMA_VERSION };
 }

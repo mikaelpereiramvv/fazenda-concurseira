@@ -59,11 +59,15 @@ export function dadosParaConcluir() {
   const a = s.sessaoAtiva;
   if (!a) return null;
   const seg = segundosLiquidos(a);
+  const fim = a.encerradaEm ? new Date(a.encerradaEm) : new Date();
   return {
     materiaId: a.materiaId,
     assuntoId: a.assuntoId,
     inicio: new Date(a.inicio),
     minutos: Math.floor(seg / 60),
+    brutoMin: (fim.getTime() - new Date(a.inicio).getTime()) / 60_000,
+    pausasQtd: Math.max(0, a.pausas.length - a.penalidades),
+    saidas: a.penalidades,
     pomodoros: a.modo === 'pomodoro' ? pomodorosCompletos(seg, s.ajustes) : 0,
     modo: a.modo,
     penalizada: a.penalidades > 0,
@@ -78,7 +82,7 @@ async function finalizarPlataforma() {
   if (s.ajustes.usarAtalhoFoco) await rodarAtalho(s.ajustes.atalhoOff, 'fazenda://');
 }
 
-export async function confirmarConclusao(extra: { assuntoId?: string; questoes?: number; acertos?: number }): Promise<ResumoSessao | null> {
+export async function confirmarConclusao(extra: { assuntoId?: string; questoes?: number; acertos?: number; banca?: string; formato?: 'certo_errado' | 'multipla' }): Promise<ResumoSessao | null> {
   const d = dadosParaConcluir();
   if (!d) return null;
   let resumo: ResumoSessao | null = null;
@@ -86,7 +90,8 @@ export async function confirmarConclusao(extra: { assuntoId?: string; questoes?:
     const r = registrarSessao({ ...s, sessaoAtiva: undefined }, {
       materiaId: d.materiaId, assuntoId: extra.assuntoId ?? d.assuntoId, inicio: d.inicio, duracaoMin: d.minutos,
       origem: 'cronometro', modo: d.modo, pomodoros: d.pomodoros, questoes: extra.questoes, acertos: extra.acertos,
-      penalizada: d.penalizada,
+      penalizada: d.penalizada, brutoMin: d.brutoMin, pausasQtd: d.pausasQtd, saidas: d.saidas,
+      banca: extra.banca, formato: extra.formato,
     });
     resumo = r.resumo;
     return r.state;

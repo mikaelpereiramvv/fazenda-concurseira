@@ -204,3 +204,26 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .sessao .relogio { text-shadow: 0 4px 24px rgba(0, 0, 0, .45); }
 .sessao.minima { background: #1f160e; }
 @media (prefers-reduced-motion: reduce) { .confete, .pilula.pulsar, .correio-btn .selo { animation: none !important; } }
+
+/* ---------- estudos v0.3 ---------- */
+.segmentos.rolavel { overflow-x: auto; scrollbar-width: none; }
+.segmentos.rolavel::-webkit-scrollbar { display: none; }
+.segmentos.rolavel button { flex: 0 0 auto; padding: 8px 12px; }
+.grade-provas { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.mini.prova { border: 0; font: inherit; }
+.mini.prova .v { color: var(--terra); font-size: 24px; }
+.faixa-hoje { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 13px; color: var(--suave); margin-bottom: 8px; }
+.faixa-hoje button { border: 0; background: #fde9c4; color: #8a5a00; border-radius: 10px; padding: 2px 8px; font-size: 13px; }
+.flashcard { min-height: 160px; }
+.flashcard .resposta { background: #eef7e2; border-radius: 12px; padding: 12px; font-size: 16px; animation: aparecer .2s; }
+.evolucao { display: flex; align-items: flex-end; gap: 8px; height: 140px; margin-top: 10px; overflow-x: auto; }
+.evolucao .coluna { flex: 0 0 36px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; }
+.evolucao .barra-v { width: 26px; border-radius: 6px 6px 2px 2px; min-height: 4px; }
+.evolucao .valor { font-size: 10px; color: var(--suave); }
+.evolucao .rot { font-size: 10px; color: var(--suave); }
+.mini-input { flex: 1; min-width: 0; border: 1.5px solid var(--creme-2); border-radius: 10px; padding: 8px; font-size: 16px; background: #fff; }
+.titulo-input { flex: 1; border: 0; border-bottom: 1.5px dashed var(--creme-2); background: transparent; font-size: 18px; font-weight: 800; color: var(--cafe); padding: 2px 0; }
+.relatorio .grade-rel { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.relatorio .grade-rel div { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.relatorio .grade-rel span { font-size: 17px; font-weight: 800; color: var(--cafe); }
+.relatorio .grade-rel small { font-size: 11px; color: var(--suave); }

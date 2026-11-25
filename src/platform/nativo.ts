@@ -135,13 +135,13 @@ export async function vibrar() {
 
 // ---------------- Backup ----------------
 
-export async function exportarArquivo(nome: string, conteudo: string): Promise<'compartilhado' | 'baixado'> {
+export async function exportarArquivo(nome: string, conteudo: string, tipo = 'application/json'): Promise<'compartilhado' | 'baixado'> {
   if (ehNativo) {
     const r = await Filesystem.writeFile({ path: nome, data: conteudo, directory: Directory.Cache, encoding: Encoding.UTF8 });
-    await Share.share({ title: 'Backup da Fazenda Concurseira', files: [r.uri] });
+    await Share.share({ title: nome, files: [r.uri] });
     return 'compartilhado';
   }
-  const blob = new Blob([conteudo], { type: 'application/json' });
+  const blob = new Blob([conteudo], { type: tipo });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = nome;
