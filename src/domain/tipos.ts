@@ -115,6 +115,10 @@ export interface Ajustes {
   appsRedirecionar: string[];
   appsSaidaAutorizada: string[];
   simularSaidaNoNavegador: boolean;
+  /** Sons da fazenda (desligado por padrão). Nunca tocam durante a sessão, exceto o fim do Pomodoro. */
+  sons?: boolean;
+  /** Durante a sessão: só o relógio, sem ver a fazenda. */
+  sessaoTelaMinima?: boolean;
 }
 
 export interface Registro {
@@ -125,6 +129,11 @@ export interface Registro {
   diasCongelados: string[];
   marcosCongeladorGratis: string[];
   tentativas: { em: string; app: string }[];
+  /** Chaves de missões já resgatadas (ex.: "d:2026-11-25:d_60min", "c:c_primeiro_rocado"). */
+  missoesResgatadas?: string[];
+  cartasLidas?: string[];
+  /** Itens exclusivos ganhos em missões, ainda não colocados na fazenda. */
+  inventario?: Record<string, number>;
 }
 
 export interface Ciclo {

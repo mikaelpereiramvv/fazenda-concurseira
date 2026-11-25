@@ -205,6 +205,24 @@ export function comprarConstrucao(state: AppState, ref: string, x: number, y: nu
   return { ok: true, state: { ...pago, fazenda: { ...pago.fazenda, itens: [...pago.fazenda.itens, item] } } };
 }
 
+/** Coloca na fazenda um item exclusivo ganho em missão (grátis, sai do inventário). */
+export function colocarDoInventario(state: AppState, ref: string, x: number, y: number, rot = 0): Resultado {
+  const b = bloqueadoDuranteSessao(state); if (b) return b;
+  const inv = state.registro.inventario ?? {};
+  if (!inv[ref]) return falha('Você não tem esse item no inventário.');
+  const c = construcao(ref);
+  if (!c) return falha('Item desconhecido.');
+  const [cw, ch] = tamanhoItem({ tipo: 'construcao', ref, rot });
+  if (!areaLivre(state, x, y, cw, ch)) return falha('Não cabe aí.');
+  const item: ItemFazenda = { id: novoId(), tipo: 'construcao', ref, x, y, nivel: 1, ...(rot ? { rot } : {}) };
+  const novoInv = { ...inv, [ref]: inv[ref] - 1 };
+  if (novoInv[ref] <= 0) delete novoInv[ref];
+  return {
+    ok: true,
+    state: { ...state, registro: { ...state.registro, inventario: novoInv }, fazenda: { ...state.fazenda, itens: [...state.fazenda.itens, item] } },
+  };
+}
+
 export function vagasAnimal(state: AppState, ref: string): { podeComprar: boolean; motivo?: string } {
   const a = animal(ref);
   if (!a) return { podeComprar: false, motivo: 'Animal desconhecido.' };

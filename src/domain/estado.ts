@@ -23,6 +23,8 @@ export const AJUSTES_PADRAO: Ajustes = {
   appsRedirecionar: ['Instagram', 'TikTok', 'YouTube', 'WhatsApp'],
   appsSaidaAutorizada: ['Leitor de PDF', 'Anki', 'Sites/apps de questões'],
   simularSaidaNoNavegador: false,
+  sons: false,
+  sessaoTelaMinima: false,
 };
 
 export function estadoInicial(agora = new Date()): AppState {
@@ -47,6 +49,7 @@ export function estadoInicial(agora = new Date()): AppState {
     registro: {
       metasDiariasPagas: [], metasSemanaisPagas: [], diasCongelados: [],
       marcosCongeladorGratis: [], tentativas: [],
+      missoesResgatadas: [], cartasLidas: [], inventario: {},
     },
   };
 }

@@ -8,7 +8,7 @@ export interface Animal {
 export interface Construcao {
   id: string; nome: string; nivel: number; preco: number; tamanho: [number, number];
   unica?: boolean; inicial?: boolean; upgrades?: number[]; categoria?: 'decoracao';
-  chao?: boolean; bonusVenda?: Record<string, number>; descricao: string;
+  chao?: boolean; bonusVenda?: Record<string, number>; descricao: string; exclusivo?: boolean;
 }
 export interface Lote { lote: number; tamanho: number; preco: number; nivel?: number }
 
@@ -32,6 +32,7 @@ export interface Economia {
   culturas: Cultura[];
   animais: Animal[];
   construcoes: Construcao[];
+  missoes: { diaria: number; semanal: number; manualConta: number };
 }
 
 export const ECONOMIA = bruto as unknown as Economia;

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 export function Folha({ titulo, aoFechar, children }: { titulo: string; aoFechar: () => void; children: ReactNode }) {
   return (
@@ -70,4 +70,29 @@ export function Dialogos() {
       </div>
     </div>
   );
+}
+
+/** Número que "conta" até o alvo (moedas no HUD, recompensas no resumo). */
+export function useContagem(alvo: number, duracao = 700, inicial?: number): number {
+  const [v, setV] = useState(inicial ?? alvo);
+  const atual = useRef(inicial ?? alvo);
+  useEffect(() => {
+    const de = atual.current;
+    if (de === alvo) return;
+    const reduz = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduz) { atual.current = alvo; setV(alvo); return; }
+    const t0 = performance.now();
+    let raf = 0;
+    const passo = (t: number) => {
+      const k = Math.min(1, (t - t0) / duracao);
+      const e = 1 - Math.pow(1 - k, 3);
+      const x = de + (alvo - de) * e;
+      atual.current = x;
+      setV(x);
+      if (k < 1) raf = requestAnimationFrame(passo);
+    };
+    raf = requestAnimationFrame(passo);
+    return () => cancelAnimationFrame(raf);
+  }, [alvo, duracao]);
+  return v;
 }

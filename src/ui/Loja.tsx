@@ -36,7 +36,7 @@ export function TelaLoja({ s, avisar, colocar }: { s: AppState; avisar: (t: stri
 
       {(secao === 'construcoes' || secao === 'decoracao') && (
         <div className="itens-loja">
-          {ECONOMIA.construcoes.filter((c) => !c.inicial && (secao === 'decoracao' ? c.categoria === 'decoracao' : c.categoria !== 'decoracao')).map((c) => {
+          {ECONOMIA.construcoes.filter((c) => !c.inicial && !c.exclusivo && (secao === 'decoracao' ? c.categoria === 'decoracao' : c.categoria !== 'decoracao')).map((c) => {
             const travado = nivel < c.nivel;
             return (
               <div key={c.id} className={`item-loja ${travado ? 'travado' : ''}`}>

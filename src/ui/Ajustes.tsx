@@ -4,6 +4,7 @@ import { chaveDia, diffDias } from '../domain/datas';
 import type { Ajustes, AppState } from '../domain/tipos';
 import { ehNativo, escolherArquivo, exportarArquivo, rodarAtalho } from '../platform/nativo';
 import { Chave, perguntar } from './comum';
+import { tocar } from '../platform/sons';
 
 export function TelaAjustes({ s, avisar }: { s: AppState; avisar: (t: string) => void }) {
   const a = s.ajustes;
@@ -36,6 +37,16 @@ export function TelaAjustes({ s, avisar }: { s: AppState; avisar: (t: string) =>
         <Chave rotulo="Pomodoro (min)">{num('pomodoroMin', 5, 120)}</Chave>
         <Chave rotulo="Pausa curta (min)">{num('pausaMin', 1, 60)}</Chave>
         <Chave rotulo="Pausa máxima (min)" dica="Pausa mais longa encerra a sessão">{num('pausaMaxMin', 5, 240)}</Chave>
+        <Chave rotulo="Tela mínima na sessão" dica="Só o relógio, sem ver a fazenda ao fundo">
+          <input type="checkbox" className="toggle" checked={!!a.sessaoTelaMinima} onChange={(e) => set('sessaoTelaMinima', e.target.checked)} />
+        </Chave>
+      </div>
+
+      <h2>Fazenda</h2>
+      <div className="cartao">
+        <Chave rotulo="Sons" dica="Cliques, colheita e moedas. Na sessão, só o fim do Pomodoro">
+          <input type="checkbox" className="toggle" checked={!!a.sons} onChange={(e) => { set('sons', e.target.checked); if (e.target.checked) tocar('moeda', true); }} />
+        </Chave>
       </div>
 
       <h2>Foco e bloqueio</h2>

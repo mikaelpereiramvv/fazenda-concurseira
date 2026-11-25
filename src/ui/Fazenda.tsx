@@ -1,22 +1,29 @@
-import { useEffect, useMemo, useState } from 'react';
-import { FarmView } from '../game/FarmView';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FarmView, type FarmViewApi } from '../game/FarmView';
 import type { Colocacao } from '../game/FarmScene';
 import { atualizar } from '../store';
 import { nivelDeXp } from '../domain/niveis';
 import { calcularOfensiva } from '../domain/ofensiva';
 import { proximaMateria } from '../domain/ciclo';
 import { ECONOMIA, cultura } from '../domain/economia';
-import { colher, comprarCanteiro, comprarConstrucao, estagioCultura, girarItem, moverItem, plantar, proximaRotacao, rotacoesDe, tamanhoItem } from '../domain/fazenda';
+import {
+  colher, colocarDoInventario, comprarCanteiro, comprarConstrucao, estagioCultura, girarItem, moverItem, plantar,
+  proximaRotacao, rotacoesDe, tamanhoItem,
+} from '../domain/fazenda';
+import { pendenciasCorreio } from '../domain/missoes';
 import { estaPausada, segundosAteProximoPomodoro, segundosLiquidos, pomodorosCompletos } from '../domain/timer';
 import { formatarRelogio } from '../domain/datas';
 import type { AppState, ItemFazenda, ModoTimer, ResumoSessao } from '../domain/tipos';
 import {
   alternarPausa, cancelarSessao, confirmarConclusao, dadosParaConcluir, iniciarSessao, verificarPausaLonga,
 } from '../sessao';
-import { Folha, Icone, Moedas, perguntar } from './comum';
+import { tocar } from '../platform/sons';
+import { vibrar } from '../platform/nativo';
+import { Folha, Icone, Moedas, perguntar, useContagem } from './comum';
+import { Correio } from './Correio';
 
 export type PedidoColocacao =
-  | { tipo: 'construcao'; ref: string; w: number; h: number; rotulo: string; rot?: number }
+  | { tipo: 'construcao'; ref: string; w: number; h: number; rotulo: string; rot?: number; doInventario?: boolean }
   | { tipo: 'canteiro'; w: 1; h: 1; rotulo: string }
   | { tipo: 'mover'; id: string; w: number; h: number; rotulo: string };
 
@@ -26,34 +33,76 @@ interface Props {
   colocacao: PedidoColocacao | null;
   setColocacao: (c: PedidoColocacao | null) => void;
   irPara: (aba: 'estudos') => void;
+  /** Quantas ervas daninhas mostrar (revisões atrasadas). */
+  ervas?: number;
 }
 
-export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Props) {
+/** Mede a altura de um elemento (para a câmera não esconder o terreno atrás da interface). */
+function useAltura<T extends HTMLElement>(): [(el: T | null) => void, number] {
+  const [h, setH] = useState(0);
+  const obs = useRef<ResizeObserver | null>(null);
+  const ref = (el: T | null) => {
+    obs.current?.disconnect();
+    if (!el) { setH(0); return; }
+    obs.current = new ResizeObserver(() => setH(el.getBoundingClientRect().bottom > 0 ? el.offsetHeight : 0));
+    obs.current.observe(el);
+    setH(el.offsetHeight);
+  };
+  return [ref, h];
+}
+
+export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara, ervas = 0 }: Props) {
   const nivel = nivelDeXp(s.jogador.xp);
   const ofensiva = calcularOfensiva(s);
   const [canteiroSel, setCanteiroSel] = useState<ItemFazenda | null>(null);
   const [itemSel, setItemSel] = useState<ItemFazenda | null>(null);
   const [resumo, setResumo] = useState<ResumoSessao | null>(null);
+  const [correio, setCorreio] = useState(false);
+  const farm = useRef<FarmViewApi>(null);
+  const [refHud, hHud] = useAltura<HTMLDivElement>();
+  const [refPainel, hPainel] = useAltura<HTMLDivElement>();
+  const emSessao = !!s.sessaoAtiva;
+  const pend = pendenciasCorreio(s);
+  const sons = s.ajustes.sons;
+
+  // moedas do HUD: contagem animada + pulso quando sobem
+  const moedasVis = useContagem(s.jogador.moedas, 700);
+  const [pulso, setPulso] = useState(false);
+  const moedasAnt = useRef(s.jogador.moedas);
+  useEffect(() => {
+    if (s.jogador.moedas > moedasAnt.current) { setPulso(true); setTimeout(() => setPulso(false), 650); }
+    moedasAnt.current = s.jogador.moedas;
+  }, [s.jogador.moedas]);
 
   const aoTocar = (x: number, y: number, item?: ItemFazenda) => {
     if (s.sessaoAtiva) return;
+    tocar('clique', sons);
     if (colocacao) {
       const r = colocacao.tipo === 'canteiro' ? comprarCanteiro(s, x, y)
         : colocacao.tipo === 'mover' ? moverItem(s, colocacao.id, x, y)
+        : colocacao.doInventario ? colocarDoInventario(s, colocacao.ref, x, y, colocacao.rot ?? 0)
         : comprarConstrucao(s, colocacao.ref, x, y, colocacao.rot ?? 0);
       if (!r.ok) return avisar(r.erro);
       atualizar(() => r.state);
       avisar(colocacao.tipo === 'mover' ? 'Movido!' : `${colocacao.rotulo} colocado! 🎉`);
-      if (colocacao.tipo !== 'construcao' || colocacao.ref !== 'cerca') setColocacao(null);
+      const repetir = colocacao.tipo === 'construcao' && !colocacao.doInventario && colocacao.ref === 'cerca';
+      if (!repetir) setColocacao(null);
       return;
     }
     if (!item) return;
     if (item.tipo === 'canteiro') {
       if (item.cultura && (item.cultura.murcha || estagioCultura(item) === 4)) {
+        const antes = s.jogador.moedas;
         const r = colher(s, item.id);
         if (!r.ok) return avisar(r.erro);
         atualizar(() => r.state);
-        return avisar(r.mensagem ?? 'Feito!');
+        const ganho = r.state.jogador.moedas - antes;
+        if (ganho > 0) {
+          farm.current?.efeitoColheita(item.x, item.y, `+${ganho}`);
+          tocar('colheita', sons);
+          vibrar();
+        }
+        return;
       }
       setCanteiroSel(item);
       return;
@@ -72,23 +121,33 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Prop
     setColocacao({ ...colocacao, rot: proximaRotacao(colocacao.ref, colocacao.rot ?? 0) });
   };
 
+  const margens = useMemo(
+    () => (emSessao ? { topo: 0, baixo: 0 } : { topo: hHud + 18, baixo: hPainel + 16 }),
+    [emSessao, hHud, hPainel],
+  );
+
   return (
     <div className="tela-fazenda">
-      <FarmView estado={s} colocacao={colocacaoCena} aoTocarCelula={aoTocar} />
-      <div className="hud">
-        <div className="pilula nivel">
-          <div className="linha" style={{ justifyContent: 'space-between' }}>
-            <span><Icone k="ui_xp" /> Nível {nivel.nivel}</span>
-            <span style={{ color: 'var(--suave)', fontWeight: 600, flex: 'none' }}>{nivel.xpNoNivel}/{nivel.xpDoNivel} XP</span>
+      <FarmView ref={farm} estado={s} colocacao={colocacaoCena} aoTocarCelula={aoTocar} margens={margens} modoSessao={emSessao} ervas={ervas} />
+      {!emSessao && (
+        <div className="hud" ref={refHud}>
+          <div className="pilula nivel">
+            <div className="linha" style={{ justifyContent: 'space-between' }}>
+              <span><Icone k="ui_xp" /> Nível {nivel.nivel}</span>
+              <span style={{ color: 'var(--suave)', fontWeight: 600, flex: 'none' }}>{nivel.xpNoNivel}/{nivel.xpDoNivel} XP</span>
+            </div>
+            <div className="barra"><div style={{ width: `${nivel.progresso * 100}%` }} /></div>
           </div>
-          <div className="barra"><div style={{ width: `${nivel.progresso * 100}%` }} /></div>
+          <div className={`pilula ${pulso ? 'pulsar' : ''}`}><Moedas v={Math.round(moedasVis)} /></div>
+          <div className="pilula"><Icone k="ui_ofensiva" />{ofensiva}</div>
+          <button className="pilula correio-btn" aria-label="Correio da fazenda" onClick={() => setCorreio(true)}>
+            ✉️{pend > 0 && <span className="selo">{pend}</span>}
+          </button>
         </div>
-        <div className="pilula"><Moedas v={s.jogador.moedas} /></div>
-        <div className="pilula"><Icone k="ui_ofensiva" />{ofensiva}</div>
-      </div>
+      )}
 
       {colocacao ? (
-        <div className="aviso-colocar">
+        <div className="aviso-colocar" ref={refPainel}>
           <span style={{ flex: 1 }}>
             Toque no terreno para colocar: {colocacao.rotulo}
             {colocacao.tipo === 'construcao' && rotacoesDe(colocacao.ref) > 1 && <small style={{ display: 'block', fontWeight: 500 }}>Posição {(colocacao.rot ?? 0) + 1} de {rotacoesDe(colocacao.ref)}</small>}
@@ -96,12 +155,13 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Prop
           {colocacao.tipo === 'construcao' && <button className="btn" style={{ flex: 'none' }} onClick={girarColocacao}>↻ Girar</button>}
           <button className="btn" style={{ flex: 'none' }} onClick={() => setColocacao(null)}>Concluir</button>
         </div>
-      ) : !s.sessaoAtiva ? (
-        <PainelIniciar s={s} irPara={irPara} />
+      ) : !emSessao ? (
+        <div className="painel-wrap" ref={refPainel}><PainelIniciar s={s} irPara={irPara} /></div>
       ) : null}
 
-      {s.sessaoAtiva && <SessaoEmAndamento s={s} avisar={avisar} aoConcluir={setResumo} />}
+      {emSessao && <SessaoEmAndamento s={s} avisar={avisar} aoConcluir={(r) => { setResumo(r); tocar(r.nivelDepois > r.nivelAntes ? 'nivel' : 'moeda', sons); }} />}
       {resumo && <ResumoFinal resumo={resumo} aoFechar={() => setResumo(null)} />}
+      {correio && <Correio s={s} avisar={avisar} aoFechar={() => setCorreio(false)} colocar={(c) => { setCorreio(false); setColocacao(c); }} />}
 
       {canteiroSel && (
         <Folha titulo={canteiroSel.cultura ? 'Crescendo…' : 'O que plantar?'} aoFechar={() => setCanteiroSel(null)}>
@@ -118,6 +178,7 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara }: Prop
                       if (!r.ok) return avisar(r.erro);
                       atualizar(() => r.state);
                       setCanteiroSel(null);
+                      tocar('clique', sons);
                       avisar(`${c.nome} plantado! Cresce em ${c.minutos} min de estudo. 🌱`);
                     }}>
                     <span className="nome">{travado && <Icone k="ui_cadeado" />} {c.nome}</span>
@@ -220,11 +281,18 @@ function SessaoEmAndamento({ s, avisar, aoConcluir }: { s: AppState; avisar: (t:
 
   const seg = segundosLiquidos(a);
   const pausada = estaPausada(a);
+  // a "arara" anuncia o fim de cada Pomodoro (único som permitido durante a sessão)
+  const pomos = a.modo === 'pomodoro' ? pomodorosCompletos(seg, s.ajustes) : 0;
+  const pomosAnt = useRef(pomos);
+  useEffect(() => {
+    if (pomos > pomosAnt.current) tocar('fim', s.ajustes.sons);
+    pomosAnt.current = pomos;
+  }, [pomos, s.ajustes.sons]);
   const materia = s.materias.find((m) => m.id === a.materiaId);
   const encerrada = !!a.encerradaEm;
 
   return (
-    <div className={`sessao ${pausada ? 'pausada' : ''}`}>
+    <div className={`sessao ${pausada ? 'pausada' : ''} ${s.ajustes.sessaoTelaMinima ? 'minima' : ''}`}>
       <div className="materia">{materia?.nome ?? 'Estudo'}</div>
       <div className="relogio">{formatarRelogio(seg)}</div>
       <div className="sub">
@@ -295,15 +363,42 @@ function ConcluirSessao({ s, aoCancelar, aoSalvar }: {
 }
 
 export function ResumoFinal({ resumo, aoFechar }: { resumo: ResumoSessao; aoFechar: () => void }) {
+  const subiu = resumo.nivelDepois > resumo.nivelAntes;
+  const meta = resumo.linhas.some((l) => l.motivo.startsWith('Meta'));
+  const xp = useContagem(resumo.xp, 900, 0);
+  const moedas = useContagem(resumo.moedas, 1100, 0);
+  const [visiveis, setVisiveis] = useState(0);
+  useEffect(() => {
+    if (visiveis >= resumo.linhas.length) return;
+    const t = setTimeout(() => setVisiveis((v) => v + 1), 180);
+    return () => clearTimeout(t);
+  }, [visiveis, resumo.linhas.length]);
   return (
-    <Folha titulo={resumo.nivelDepois > resumo.nivelAntes ? `Nível ${resumo.nivelDepois}! 🎉` : 'Sessão registrada! 🌾'} aoFechar={aoFechar}>
+    <Folha titulo={subiu ? `Nível ${resumo.nivelDepois}! 🎉` : 'Sessão registrada! 🌾'} aoFechar={aoFechar}>
+      {(subiu || meta) && <Confete />}
+      <div className="resumo-topo">
+        <div><div className="grande-num">+{Math.round(xp)}</div><div className="r">XP</div></div>
+        <div><div className="grande-num ouro">+{Math.round(moedas)}</div><div className="r">moedas</div></div>
+      </div>
+      {meta && <div className="carimbo">Meta do dia ✔</div>}
       <div className="cartao">
-        <div className="recompensa"><span>XP</span><b>+{resumo.xp}</b></div>
-        {resumo.linhas.map((l, i) => <div key={i} className="recompensa"><span>{l.motivo}</span><b>+{l.moedas}</b></div>)}
-        <div className="recompensa" style={{ borderBottom: 0, fontWeight: 800 }}><span>Total</span><Moedas v={resumo.moedas} /></div>
+        {resumo.linhas.slice(0, visiveis).map((l, i) => <div key={i} className="recompensa entrar"><span>{l.motivo}</span><b>+{l.moedas}</b></div>)}
+        {resumo.linhas.length === 0 && <div style={{ color: 'var(--suave)', fontSize: 14 }}>Sessões curtas contam XP; moedas a partir de {ECONOMIA.moedas.sessaoMinimaParaMoedasMin} min.</div>}
       </div>
       {resumo.culturasProntas > 0 && <p>🌽 {resumo.culturasProntas} plantação(ões) prontas para colher!</p>}
-      <button className="btn primario grande" onClick={aoFechar}>Voltar para a fazenda</button>
+      <button className="btn primario grande" onClick={aoFechar}>Ver a fazenda</button>
     </Folha>
+  );
+}
+
+function Confete() {
+  const pecas = useMemo(() => Array.from({ length: 36 }, (_, i) => ({
+    left: Math.random() * 100, delay: Math.random() * 0.6, dur: 1.6 + Math.random() * 1.2,
+    cor: ['#e74c3c', '#f2c230', '#27ae60', '#2980b9', '#e67e22'][i % 5], rot: Math.random() * 360,
+  })), []);
+  return (
+    <div className="confete" aria-hidden="true">
+      {pecas.map((p, i) => <i key={i} style={{ left: `${p.left}%`, background: p.cor, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, transform: `rotate(${p.rot}deg)` }} />)}
+    </div>
   );
 }

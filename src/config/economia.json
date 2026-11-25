@@ -88,6 +88,17 @@
     { "id": "paiol", "nome": "Paiol", "nivel": 8, "preco": 500, "tamanho": [1, 1], "unica": true, "descricao": "Guarda colheitas (fase 2)." },
     { "id": "terreiro", "nome": "Terreiro de café", "nivel": 10, "preco": 600, "tamanho": [2, 2], "unica": true, "bonusVenda": { "cafe": 0.1 }, "descricao": "+10% na venda de café." },
     { "id": "cerca", "nome": "Cerca de madeira", "nivel": 1, "preco": 4, "tamanho": [1, 1], "categoria": "decoracao", "descricao": "Decorativa." },
-    { "id": "caminho", "nome": "Caminho de terra roxa", "nivel": 1, "preco": 2, "tamanho": [1, 1], "categoria": "decoracao", "chao": true, "descricao": "Decorativo; dá para andar por cima." }
-  ]
+    { "id": "caminho", "nome": "Caminho de terra roxa", "nivel": 1, "preco": 2, "tamanho": [1, 1], "categoria": "decoracao", "chao": true, "descricao": "Decorativo; dá para andar por cima." },
+    { "id": "espantalho", "nome": "Espantalho", "nivel": 1, "preco": 0, "tamanho": [1, 1], "categoria": "decoracao", "exclusivo": true, "descricao": "Recompensa de missão: fechou uma volta do ciclo." },
+    { "id": "carro_de_boi", "nome": "Carro de boi", "nivel": 1, "preco": 0, "tamanho": [1, 1], "categoria": "decoracao", "exclusivo": true, "descricao": "Recompensa de missão: duas semanas cheias." },
+    { "id": "placa_aprovado", "nome": "Placa \"Aprovado(a)\"", "nivel": 1, "preco": 0, "tamanho": [1, 1], "categoria": "decoracao", "exclusivo": true, "descricao": "Recompensa de missão: pontaria nas questões." },
+    { "id": "jabuticabeira", "nome": "Jabuticabeira", "nivel": 1, "preco": 0, "tamanho": [1, 1], "categoria": "decoracao", "exclusivo": true, "descricao": "Recompensa do fim do capítulo Mata Atlântica." },
+    { "id": "caixa_correio", "nome": "Caixa de correio", "nivel": 1, "preco": 0, "tamanho": [1, 1], "categoria": "decoracao", "exclusivo": true, "descricao": "Onde o Zé do Correio deixa as cartas." }
+  ],
+  "missoes": {
+    "_comentario": "Missões só olham dados de ESTUDO. Moedas limitadas a ~15% da renda semanal (2 h/dia).",
+    "diaria": 20,
+    "semanal": 60,
+    "manualConta": 0.5
+  }
 }

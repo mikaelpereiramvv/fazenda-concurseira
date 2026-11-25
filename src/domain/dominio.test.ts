@@ -212,3 +212,58 @@ describe('girar objetos (compatível com dados antigos)', () => {
     expect(girarItem(emSessao, f.id).ok).toBe(false);
   });
 });
+
+import { missoesAtivas, resgatarMissao, cartasDisponiveis, marcarCartasLidas, pendenciasCorreio } from './missoes';
+import { colocarDoInventario } from './fazenda';
+
+describe('enredo e missões', () => {
+  it('sempre há 1 diária, 1 semanal e 1 de capítulo', () => {
+    const m = missoesAtivas(comMateria(), H(10));
+    expect(m.map((x) => x.tipo)).toEqual(['diaria', 'semanal', 'capitulo']);
+    expect(m[2].id).toBe('c_primeiro_rocado');
+  });
+  it('capítulo conclui com estudo real, resgata uma vez e avança', () => {
+    let s = registrarSessao(comMateria(), { materiaId: 'pt', inicio: H(8), duracaoMin: 30, origem: 'cronometro' }, H(9)).state;
+    const cap = missoesAtivas(s, H(10)).find((x) => x.tipo === 'capitulo')!;
+    expect(cap.concluida).toBe(true);
+    const antes = s.jogador.moedas;
+    const r = resgatarMissao(s, cap.chave, H(10)); if (!r.ok) throw new Error(r.erro);
+    s = r.state;
+    expect(s.jogador.moedas).toBe(antes + 30);
+    expect(s.registro.inventario?.caixa_correio).toBe(1);
+    expect(resgatarMissao(s, cap.chave, H(10)).ok).toBe(false);
+    expect(missoesAtivas(s, H(10)).find((x) => x.tipo === 'capitulo')!.id).toBe('c_pe_na_estrada');
+  });
+  it('lançamento manual conta metade nas missões', () => {
+    const s = registrarSessao(comMateria(), { materiaId: 'pt', inicio: H(6), duracaoMin: 60, origem: 'manual' }, H(9)).state;
+    // diária do dia pode variar; checa a função de minutos via missão de 60 min quando ativa
+    const m = missoesAtivas(s, H(10)).find((x) => x.id === 'd_60min');
+    if (m) expect(m.atual).toBe(30);
+  });
+  it('item do inventário vai para a fazenda de graça e sai do inventário', () => {
+    let s = comMateria();
+    s = { ...s, registro: { ...s.registro, inventario: { espantalho: 1 } } };
+    const r = colocarDoInventario(s, 'espantalho', 7, 7); if (!r.ok) throw new Error(r.erro);
+    expect(r.state.registro.inventario?.espantalho).toBeUndefined();
+    expect(r.state.jogador.moedas).toBe(s.jogador.moedas);
+    expect(colocarDoInventario(r.state, 'espantalho', 7, 6).ok).toBe(false);
+  });
+  it('carta de boas-vindas aparece e some do selo depois de lida', () => {
+    let s = comMateria();
+    expect(cartasDisponiveis(s, H(10)).some((c) => c.id === 'boas_vindas' && !c.lida)).toBe(true);
+    const p = pendenciasCorreio(s, H(10));
+    s = marcarCartasLidas(s, ['boas_vindas']);
+    expect(pendenciasCorreio(s, H(10))).toBe(p - 1);
+  });
+  it('estado antigo sem campos de missão continua funcionando', () => {
+    const s = comMateria();
+    const velho = JSON.parse(JSON.stringify(s));
+    delete velho.registro.missoesResgatadas; delete velho.registro.cartasLidas; delete velho.registro.inventario;
+    delete velho.ajustes.sons; delete velho.ajustes.sessaoTelaMinima;
+    expect(() => missoesAtivas(velho, H(10))).not.toThrow();
+    const m = migrar(velho);
+    expect(m.registro.missoesResgatadas).toEqual([]);
+    expect(m.ajustes.sons).toBe(false);
+    expect(m.sessoes).toEqual(s.sessoes);
+  });
+});

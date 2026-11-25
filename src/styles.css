@@ -130,3 +130,77 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .sessao .btn { color: var(--texto); }
 .sessao .btn.verde { color: #fff; }
 .sessao .folha { color: var(--texto); text-align: left; }
+
+/* ---------- cenário: céu, morros, nuvens, dia/noite ---------- */
+.cenario { position: absolute; inset: 0; overflow: hidden; }
+.cenario .ceu { position: absolute; inset: 0; transition: background 2s; }
+.periodo-dia .ceu { background: linear-gradient(180deg, #6fb8e6 0%, #9fd3f0 45%, #d8eef7 75%, #eef6e4 100%); }
+.periodo-amanhecer .ceu { background: linear-gradient(180deg, #7aa6d6 0%, #f4c6a8 45%, #fde3b8 75%, #f3ecd6 100%); }
+.periodo-entardecer .ceu { background: linear-gradient(180deg, #5d6fb0 0%, #e7948a 40%, #f6b77a 70%, #f3dfc0 100%); }
+.periodo-noite .ceu { background: linear-gradient(180deg, #0f1a3a 0%, #1f2f5e 50%, #33456f 80%, #3f4f66 100%); }
+.cenario .sol { position: absolute; width: 70px; height: 70px; border-radius: 50%; right: 14%; top: calc(var(--safe-top) + 92px); background: radial-gradient(circle, #fff6c8 0 38%, #ffe27a 39% 60%, rgba(255, 226, 122, 0) 61%); filter: blur(.3px); }
+.periodo-entardecer .sol { top: calc(var(--safe-top) + 170px); background: radial-gradient(circle, #ffe0b0 0 38%, #ff9f5a 39% 60%, rgba(255, 159, 90, 0) 61%); }
+.periodo-amanhecer .sol { top: calc(var(--safe-top) + 170px); right: auto; left: 14%; }
+.periodo-noite .sol { width: 46px; height: 46px; background: radial-gradient(circle at 35% 40%, #fffbe8 0 55%, rgba(255,251,232,0) 56%); box-shadow: 0 0 40px 8px rgba(255, 251, 220, .25); }
+.cenario .morros { position: absolute; left: 0; right: 0; top: 26%; height: 22%; width: 100%; }
+.cenario .campo { position: absolute; left: 0; right: 0; top: calc(26% + 22% - 1px); bottom: 0; background: linear-gradient(180deg, #5f9850 0%, #74a95d 30%, #86b86a 100%); }
+.periodo-entardecer .campo { background: linear-gradient(180deg, #6f8150 0%, #839660 100%); }
+.periodo-noite .campo { background: linear-gradient(180deg, #22362f 0%, #2b4236 100%); }
+.morros .m1 { fill: #7fb26a; } .morros .m2 { fill: #5f9850; } .morros .arvores { fill: #3f7a3c; }
+.periodo-entardecer .morros .m1 { fill: #8f9a62; } .periodo-entardecer .morros .m2 { fill: #6f8150; } .periodo-entardecer .morros .arvores { fill: #4f6a3c; }
+.periodo-noite .morros .m1 { fill: #2c4038; } .periodo-noite .morros .m2 { fill: #22362f; } .periodo-noite .morros .arvores { fill: #18291f; }
+.cenario .nuvem { position: absolute; height: 26px; border-radius: 26px; background: rgba(255, 255, 255, .85); box-shadow: 24px -10px 0 4px rgba(255,255,255,.85), 52px 0 0 0 rgba(255,255,255,.85); animation: nuvem linear infinite; }
+.nuvem.n1 { width: 70px; top: calc(var(--safe-top) + 100px); animation-duration: 140s; animation-delay: -30s; }
+.nuvem.n2 { width: 54px; top: calc(var(--safe-top) + 150px); animation-duration: 190s; animation-delay: -120s; opacity: .8; }
+.nuvem.n3 { width: 90px; top: calc(var(--safe-top) + 70px); animation-duration: 230s; animation-delay: -60s; opacity: .7; }
+.periodo-noite .nuvem { background: rgba(160, 175, 210, .25); box-shadow: 24px -10px 0 4px rgba(160,175,210,.25), 52px 0 0 0 rgba(160,175,210,.25); }
+@keyframes nuvem { from { transform: translateX(-160px); } to { transform: translateX(110vw); } }
+.cenario .estrelas { position: absolute; inset: 0 0 60% 0; background-image:
+  radial-gradient(1.5px 1.5px at 12% 22%, #fff, transparent), radial-gradient(1px 1px at 28% 12%, #fff, transparent),
+  radial-gradient(1.5px 1.5px at 44% 30%, #fff, transparent), radial-gradient(1px 1px at 63% 18%, #fff, transparent),
+  radial-gradient(1.5px 1.5px at 78% 28%, #fff, transparent), radial-gradient(1px 1px at 88% 10%, #fff, transparent),
+  radial-gradient(1px 1px at 35% 40%, #fff, transparent), radial-gradient(1px 1px at 55% 8%, #fff, transparent);
+  animation: piscar 4s ease-in-out infinite alternate; }
+@keyframes piscar { from { opacity: .55; } to { opacity: 1; } }
+.cenario .farm-canvas { position: absolute; inset: 0; }
+.cenario .filtro-periodo { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply; transition: background 2s; }
+.periodo-amanhecer .filtro-periodo { background: rgba(255, 214, 180, .18); }
+.periodo-entardecer .filtro-periodo { background: rgba(255, 170, 120, .22); }
+.periodo-noite .filtro-periodo { background: rgba(70, 85, 150, .55); }
+.cenario .bandeirinhas { position: absolute; left: -5%; right: -5%; top: calc(var(--safe-top) + 64px); height: 34px; pointer-events: none;
+  background: conic-gradient(from 135deg at 50% 0, #e74c3c 0 90deg, transparent 0) 0 6px / 28px 26px repeat-x,
+              conic-gradient(from 135deg at 50% 0, #f1c40f 0 90deg, transparent 0) 14px 10px / 28px 26px repeat-x,
+              conic-gradient(from 135deg at 50% 0, #27ae60 0 90deg, transparent 0) 7px 2px / 28px 26px repeat-x;
+  border-top: 2px solid #5a3b22; opacity: .95; }
+@media (prefers-reduced-motion: reduce) { .cenario .nuvem, .cenario .estrelas { animation: none; } }
+
+/* ---------- HUD, correio, resumo e sessão contemplativa ---------- */
+.painel-wrap { position: absolute; left: 0; right: 0; bottom: 0; }
+.painel-wrap .painel-estudo { position: relative; left: auto; right: auto; bottom: auto; margin: 0 10px 10px; }
+.pilula.pulsar { animation: pulsar .6s ease-out; }
+@keyframes pulsar { 0% { transform: scale(1); } 35% { transform: scale(1.18); background: #fff3bf; } 100% { transform: scale(1); } }
+.correio-btn { border: 0; position: relative; font-size: 18px; padding: 6px 10px; }
+.correio-btn .selo { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--perigo); color: #fff; font-size: 12px; line-height: 20px; padding: 0 5px; animation: pulsar 1.6s ease-in-out infinite; }
+.npc { font-size: 30px; width: 44px; height: 44px; display: grid; place-items: center; background: var(--creme-2); border-radius: 50%; }
+.cartao.missao.feita { opacity: .6; }
+.cartao.carta.nova { border: 2px solid var(--ipe); }
+.texto-carta { margin: 6px 0 0; font-size: 15px; line-height: 1.45; font-style: italic; color: var(--texto); }
+.carimbo { display: inline-block; transform: rotate(-4deg); border: 3px solid var(--mata); color: var(--mata); font-weight: 900; padding: 4px 12px; border-radius: 10px; margin: 0 0 10px; letter-spacing: .5px; animation: carimbo .4s cubic-bezier(.2,1.6,.4,1); }
+.carimbo.pequeno { font-size: 12px; padding: 2px 8px; margin: 8px 0 0; border-width: 2px; }
+@keyframes carimbo { from { transform: rotate(-4deg) scale(2); opacity: 0; } }
+.resumo-topo { display: flex; gap: 12px; margin-bottom: 10px; }
+.resumo-topo > div { flex: 1; background: #fffaf0; border-radius: 16px; padding: 10px; text-align: center; box-shadow: var(--sombra); }
+.grande-num { font-size: 34px; font-weight: 900; color: var(--mata); font-variant-numeric: tabular-nums; }
+.grande-num.ouro { color: #b8860b; }
+.resumo-topo .r { font-size: 12px; color: var(--suave); }
+.recompensa.entrar { animation: entrar .25s ease-out; }
+@keyframes entrar { from { opacity: 0; transform: translateX(-12px); } }
+.confete { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 60; }
+.confete i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation: cair linear forwards; }
+@keyframes cair { to { transform: translateY(105vh) rotate(720deg); opacity: .2; } }
+
+/* sessão: a fazenda continua visível, quieta, atrás do relógio */
+.sessao { background: radial-gradient(ellipse at 50% 45%, rgba(24, 16, 10, .78) 0%, rgba(24, 16, 10, .55) 45%, rgba(24, 16, 10, .35) 75%, rgba(24, 16, 10, .55) 100%); }
+.sessao .relogio { text-shadow: 0 4px 24px rgba(0, 0, 0, .45); }
+.sessao.minima { background: #1f160e; }
+@media (prefers-reduced-motion: reduce) { .confete, .pilula.pulsar, .correio-btn .selo { animation: none !important; } }
