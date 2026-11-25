@@ -47,7 +47,7 @@
 
     "animal_galinha_idle_01": "animal_p",
     "animal_cachorro_idle_01": "animal_m",
-    "animal_nelore_idle_01": "animal_g",
+    "animal_nelore_idle_01": { "tamanho": "animal_g", "manterBrancoInterno": true },
     "animal_capivara_idle_01": "animal_m",
     "animal_mico_idle_01": "animal_m",
     "animal_arara_idle_01": "animal_m",

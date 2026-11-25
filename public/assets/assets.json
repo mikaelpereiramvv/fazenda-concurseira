@@ -1,5 +1,5 @@
 {
- "gerado": "2026-11-25T00:38:26.961Z",
+ "gerado": "2026-11-25T02:38:53.310Z",
  "atlas": "assets/atlas/farm.json",
  "frames": {
   "crop_cafe_stage1": {
@@ -250,6 +250,22 @@
     1
    ]
   },
+  "crop_abobora_stage1": {
+   "w": 384,
+   "h": 264,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_laranja_stage1": {
+   "w": 384,
+   "h": 273,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
   "bld_casa_lv1": {
    "w": 768,
    "h": 768,
@@ -261,6 +277,14 @@
   "bld_galinheiro": {
    "w": 384,
    "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_curral": {
+   "w": 768,
+   "h": 768,
    "ancora": [
     0.5,
     1
@@ -305,10 +329,25 @@
     0.5,
     1
    ]
+  },
+  "animal_cachorro_idle_01": {
+   "w": 288,
+   "h": 288,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "animal_nelore_idle_01": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
   }
  },
  "faltando": [
-  "crop_abobora_stage1",
   "crop_abobora_stage2",
   "crop_abobora_stage3",
   "crop_abobora_stage4",
@@ -323,7 +362,6 @@
   "crop_cana_stage3",
   "crop_cana_stage4",
   "crop_cana_murcho",
-  "crop_laranja_stage1",
   "crop_laranja_stage2",
   "crop_laranja_stage3",
   "crop_laranja_stage4",
@@ -340,11 +378,8 @@
   "bld_ipe_florido",
   "bld_lago",
   "bld_casa_farinha",
-  "bld_curral",
   "bld_paiol",
   "bld_terreiro",
-  "animal_cachorro_idle_01",
-  "animal_nelore_idle_01",
   "animal_capivara_idle_01",
   "animal_mico_idle_01",
   "animal_arara_idle_01"
