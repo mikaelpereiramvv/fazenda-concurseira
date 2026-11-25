@@ -19,7 +19,10 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm }
-      - run: npm ci && npm run build
+      - run: npm ci
+      - name: Processar imagens do Gemini (remover fundo, redimensionar, atlas)
+        run: npm run assets
+      - run: npm run build
       - uses: actions/upload-pages-artifact@v5
         with: { path: dist }
       - id: d

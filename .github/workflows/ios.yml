@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     tags: ['v*']
-    paths-ignore: ['docs/**', '**/*.md', '.github/workflows/pwa.yml', '.github/workflows/ios.yml']
+    paths-ignore: ['docs/**', '**/*.md', '.github/workflows/pwa.yml']
 
 permissions:
   contents: write
@@ -35,6 +35,7 @@ jobs:
       - name: Instalar dependências e gerar o web build
         run: |
           npm ci
+          npm run assets
           npm run build
           npx cap sync ios
           node scripts/ios/patch-ios.mjs

@@ -5,6 +5,14 @@ npm run assets           # processa tudo e gera public/assets/atlas/farm.json + 
 npm run assets -- --debug  # também salva cada sprite em assets/.cache/out para conferir
 ```
 
+## Pelo celular, sem computador
+
+1. Renomeie a imagem com a **chave** do item (lista em `assets/manifest.json`), ex.: `animal_galinha_idle_01.png`. No app Arquivos: toque e segure › Renomear.
+2. No GitHub (Safari): abra a pasta `assets/raw` › **Add file › Upload files** › escolha a imagem › **Commit changes**.
+3. Os builds rodam `npm run assets` sozinhos: o PWA atualiza em ~2 min e um `.ipa` novo sai no Releases em ~10 min.
+
+Se o nome não bater com nenhuma chave, a imagem é ignorada e o item continua como placeholder.
+
 ## Onde colocar as imagens
 
 - **Uma imagem por item:** `assets/raw/<chave>.jpg` (ou `.png`/`.webp`). A chave vem de `assets/manifest.json`, por exemplo `crop_milho_stage2.jpg` ou `bld_casa_lv1.png`.
