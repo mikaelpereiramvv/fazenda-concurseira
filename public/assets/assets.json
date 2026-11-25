@@ -1,5 +1,5 @@
 {
- "gerado": "2026-11-25T00:17:41.176Z",
+ "gerado": "2026-11-25T00:38:26.961Z",
  "atlas": "assets/atlas/farm.json",
  "frames": {
   "crop_cafe_stage1": {
@@ -258,6 +258,14 @@
     1
    ]
   },
+  "bld_galinheiro": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
   "bld_cerca_a": {
    "w": 384,
    "h": 384,
@@ -285,6 +293,14 @@
   "bld_caminho": {
    "w": 384,
    "h": 318,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "animal_galinha_idle_01": {
+   "w": 192,
+   "h": 192,
    "ancora": [
     0.5,
     1
@@ -320,7 +336,6 @@
   "bld_casa_lv2",
   "bld_casa_lv3",
   "bld_casa_lv4",
-  "bld_galinheiro",
   "bld_ipe",
   "bld_ipe_florido",
   "bld_lago",
@@ -328,7 +343,6 @@
   "bld_curral",
   "bld_paiol",
   "bld_terreiro",
-  "animal_galinha_idle_01",
   "animal_cachorro_idle_01",
   "animal_nelore_idle_01",
   "animal_capivara_idle_01",

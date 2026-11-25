@@ -196,12 +196,28 @@ async function ajustarTamanho(pngRecortado, cat) {
   return { buf, w: W, h: H, ancora: t.ancora };
 }
 
-function acharArquivo(baseSemExt) {
-  for (const e of EXTS) {
-    const p = path.join(RAW, baseSemExt + e);
-    if (fs.existsSync(p)) return p;
+// Índice dos arquivos brutos, tolerante ao que o celular faz com nomes:
+// extensão em maiúscula (.PNG/.JPG), extensão dobrada (.png.PNG) e letras maiúsculas no nome.
+const EXT_RE = /(\.(png|jpe?g|webp))+$/i;
+function indexarRaw(dir, prefixo = '') {
+  const mapa = new Map();
+  if (!fs.existsSync(dir)) return mapa;
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (ent.isDirectory()) {
+      for (const [k, v] of indexarRaw(path.join(dir, ent.name), `${prefixo}${ent.name}/`)) mapa.set(k, v);
+    } else if (EXT_RE.test(ent.name)) {
+      const chave = `${prefixo}${ent.name.replace(EXT_RE, '')}`.toLowerCase().trim();
+      const atual = mapa.get(chave);
+      // se houver duplicata, fica a mais recente
+      if (!atual || fs.statSync(path.join(dir, ent.name)).mtimeMs > fs.statSync(atual).mtimeMs) mapa.set(chave, path.join(dir, ent.name));
+    }
   }
-  return null;
+  return mapa;
+}
+const RAW_INDEX = indexarRaw(RAW);
+
+function acharArquivo(baseSemExt) {
+  return RAW_INDEX.get(baseSemExt.toLowerCase()) ?? null;
 }
 
 // ---------------- principal ----------------

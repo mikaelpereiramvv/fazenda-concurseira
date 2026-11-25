@@ -7,7 +7,7 @@ npm run assets -- --debug  # também salva cada sprite em assets/.cache/out para
 
 ## Pelo celular, sem computador
 
-1. Renomeie a imagem com a **chave** do item (lista em `assets/manifest.json`), ex.: `animal_galinha_idle_01.png`. No app Arquivos: toque e segure › Renomear.
+1. Renomeie a imagem com a **chave** do item (lista em `assets/manifest.json`), ex.: `animal_galinha_idle_01.png`. No app Arquivos: toque e segure › Renomear. Maiúsculas na extensão (`.PNG`) e extensão dobrada (`.png.PNG`) são aceitas.
 2. No GitHub (Safari): abra a pasta `assets/raw` › **Add file › Upload files** › escolha a imagem › **Commit changes**.
 3. Os builds rodam `npm run assets` sozinhos: o PWA atualiza em ~2 min e um `.ipa` novo sai no Releases em ~10 min.
 
