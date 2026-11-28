@@ -1,3 +1,4 @@
+import { temAnimal, temConstrucao, temCultura, useSprites } from '../game/sprites';
 import { useState } from 'react';
 import { atualizar } from '../store';
 import { ECONOMIA, lote } from '../domain/economia';
@@ -11,6 +12,7 @@ type Secao = 'construcoes' | 'animais' | 'decoracao' | 'terreno' | 'plantacoes';
 
 export function TelaLoja({ s, avisar, colocar }: { s: AppState; avisar: (t: string) => void; colocar: (c: PedidoColocacao) => void }) {
   const [secao, setSecao] = useState<Secao>('construcoes');
+  const sprites = useSprites();
   const nivel = nivelDeXp(s.jogador.xp).nivel;
   const travadaSessao = !!s.sessaoAtiva;
 
@@ -36,7 +38,7 @@ export function TelaLoja({ s, avisar, colocar }: { s: AppState; avisar: (t: stri
 
       {(secao === 'construcoes' || secao === 'decoracao') && (
         <div className="itens-loja">
-          {ECONOMIA.construcoes.filter((c) => !c.inicial && !c.exclusivo && (secao === 'decoracao' ? c.categoria === 'decoracao' : c.categoria !== 'decoracao')).map((c) => {
+          {ECONOMIA.construcoes.filter((c) => !c.inicial && !c.exclusivo && temConstrucao(sprites, c.id) && (secao === 'decoracao' ? c.categoria === 'decoracao' : c.categoria !== 'decoracao')).map((c) => {
             const travado = nivel < c.nivel;
             return (
               <div key={c.id} className={`item-loja ${travado ? 'travado' : ''}`}>
@@ -55,7 +57,7 @@ export function TelaLoja({ s, avisar, colocar }: { s: AppState; avisar: (t: stri
 
       {secao === 'animais' && (
         <div className="itens-loja">
-          {ECONOMIA.animais.map((a) => {
+          {ECONOMIA.animais.filter((a) => temAnimal(sprites, a.id) && (!a.requer || temConstrucao(sprites, a.requer))).map((a) => {
             const v = vagasAnimal(s, a.id);
             const travado = nivel < a.nivel;
             const qtd = s.fazenda.itens.filter((i) => i.ref === a.id).length;
@@ -79,7 +81,7 @@ export function TelaLoja({ s, avisar, colocar }: { s: AppState; avisar: (t: stri
       {secao === 'plantacoes' && (
         <div className="cartao">
           <p style={{ marginTop: 0 }}>Toque num canteiro vazio na fazenda para plantar. As culturas crescem só com <b>minutos de estudo</b>.</p>
-          {ECONOMIA.culturas.map((c) => (
+          {ECONOMIA.culturas.filter((c) => temCultura(sprites, c.id)).map((c) => (
             <div key={c.id} className="lista-item" style={{ opacity: nivel < c.nivel ? 0.5 : 1 }}>
               <span style={{ flex: 2 }}>{nivel < c.nivel && <Icone k="ui_cadeado" />} {c.nome}</span>
               <span style={{ fontSize: 13, color: 'var(--suave)' }}>{c.minutos} min · nível {c.nivel}</span>

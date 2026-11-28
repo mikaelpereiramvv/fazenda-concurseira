@@ -1,3 +1,4 @@
+import { temCultura, useSprites } from '../game/sprites';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FarmView, type FarmViewApi } from '../game/FarmView';
 import type { Colocacao } from '../game/FarmScene';
@@ -57,6 +58,7 @@ function useAltura<T extends HTMLElement>(): [(el: T | null) => void, number] {
 }
 
 export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara, ervas = 0, pre = null }: Props) {
+  const sprites = useSprites();
   const nivel = nivelDeXp(s.jogador.xp);
   const ofensiva = calcularOfensiva(s);
   const [canteiroSel, setCanteiroSel] = useState<ItemFazenda | null>(null);
@@ -174,7 +176,7 @@ export function TelaFazenda({ s, avisar, colocacao, setColocacao, irPara, ervas 
             <InfoCultura item={canteiroSel} />
           ) : (
             <div className="itens-loja">
-              {ECONOMIA.culturas.map((c) => {
+              {ECONOMIA.culturas.filter((c) => temCultura(sprites, c.id)).map((c) => {
                 const travado = nivel.nivel < c.nivel;
                 return (
                   <button key={c.id} className={`item-loja ${travado ? 'travado' : ''}`} style={{ border: 0, textAlign: 'left' }}

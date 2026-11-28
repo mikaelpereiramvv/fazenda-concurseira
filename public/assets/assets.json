@@ -1,5 +1,5 @@
 {
- "gerado": "2026-11-28T01:56:31.602Z",
+ "gerado": "2026-11-28T02:18:17.015Z",
  "atlas": "assets/atlas/farm.json",
  "frames": {
   "crop_cafe_stage1": {
@@ -372,7 +372,7 @@
   },
   "crop_tomate_stage1": {
    "w": 384,
-   "h": 299,
+   "h": 269,
    "ancora": [
     0.5,
     1
@@ -380,7 +380,7 @@
   },
   "crop_tomate_stage2": {
    "w": 384,
-   "h": 366,
+   "h": 303,
    "ancora": [
     0.5,
     1
@@ -388,7 +388,7 @@
   },
   "crop_tomate_stage3": {
    "w": 384,
-   "h": 465,
+   "h": 360,
    "ancora": [
     0.5,
     1
@@ -396,7 +396,7 @@
   },
   "crop_tomate_stage4": {
    "w": 384,
-   "h": 517,
+   "h": 375,
    "ancora": [
     0.5,
     1
@@ -404,7 +404,7 @@
   },
   "crop_tomate_murcho": {
    "w": 384,
-   "h": 465,
+   "h": 351,
    "ancora": [
     0.5,
     1
@@ -650,6 +650,102 @@
     1
    ]
   },
+  "bld_coqueiro": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_mandacaru": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_trator": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_feno": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_carrinho_de_mao": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_fogao_lenha": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_banco": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_rede": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_cocho": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_porteira": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_varal": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_igrejinha": {
+   "w": 768,
+   "h": 768,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
   "animal_galinha_idle_01": {
    "w": 192,
    "h": 192,
@@ -667,6 +763,46 @@
    ]
   },
   "animal_nelore_idle_01": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "animal_porco_idle_01": {
+   "w": 288,
+   "h": 288,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "animal_bode_idle_01": {
+   "w": 288,
+   "h": 288,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "animal_pato_idle_01": {
+   "w": 192,
+   "h": 192,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "animal_cavalo_idle_01": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "animal_jegue_idle_01": {
    "w": 384,
    "h": 384,
    "ancora": [

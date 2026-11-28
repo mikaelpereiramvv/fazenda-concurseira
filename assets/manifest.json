@@ -48,7 +48,8 @@
     "bld_caminho": "bloco",
     "bld_poco": "obj1", "bld_moinho": "obj1", "bld_caixa_dagua": "obj1", "bld_silo": "obj1",
     "bld_jabuticabeira": "obj1", "bld_mangueira": "obj1",
-    "bld_arbusto": "obj1", "bld_moita": "obj1", "bld_pedra": "obj1", "bld_pedras": "obj1",
+    "bld_arbusto": "obj1", "bld_moita": "obj1", "bld_pedra": "obj1", "bld_pedras": "obj1", "bld_coqueiro": "obj1", "bld_mandacaru": "obj1",
+    "bld_trator": "obj1", "bld_feno": "obj1", "bld_carrinho_de_mao": "obj1", "bld_fogao_lenha": "obj1", "bld_banco": "obj1", "bld_rede": "obj1", "bld_cocho": "obj1", "bld_porteira": "obj1", "bld_varal": "obj1", "bld_igrejinha": "obj2",
 
     "animal_galinha_idle_01": "animal_p",
     "animal_cachorro_idle_01": "animal_m",
@@ -56,6 +57,7 @@
     "animal_capivara_idle_01": "animal_m",
     "animal_mico_idle_01": "animal_m",
     "animal_arara_idle_01": "animal_m",
+    "animal_porco_idle_01": "animal_m", "animal_bode_idle_01": "animal_m", "animal_pato_idle_01": "animal_p", "animal_cavalo_idle_01": "animal_g", "animal_jegue_idle_01": "animal_g",
 
     "ui_moeda": "icone", "ui_xp": "icone", "ui_ofensiva": "icone", "ui_cadeado": "icone", "ui_relogio": "icone"
   }

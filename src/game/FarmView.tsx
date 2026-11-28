@@ -1,7 +1,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Phaser from 'phaser';
-import { FarmScene, type AssetsRuntime, type CallbacksCena, type Colocacao } from './FarmScene';
+import { FarmScene, type CallbacksCena, type Colocacao } from './FarmScene';
 import type { AppState } from '../domain/tipos';
+import { carregarAssets } from './sprites';
 
 interface Props {
   estado: AppState;
@@ -17,14 +18,6 @@ export interface FarmViewApi {
   efeitoColheita: (x: number, y: number, texto: string) => void;
 }
 
-let assetsCache: Promise<AssetsRuntime> | null = null;
-function carregarAssets(): Promise<AssetsRuntime> {
-  assetsCache ??= fetch('assets/assets.json')
-    .then((r) => (r.ok ? r.json() : null))
-    .then((j) => j ?? { atlas: null, frames: {}, faltando: [] })
-    .catch(() => ({ atlas: null, frames: {}, faltando: [] }));
-  return assetsCache;
-}
 
 export type Periodo = 'amanhecer' | 'dia' | 'entardecer' | 'noite';
 export function periodoDoDia(d = new Date()): Periodo {
