@@ -1,0 +1,750 @@
+[
+ {
+  "saida": "assets/raw/crop_cana_stage1.png",
+  "grupo": "cana",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.8,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_1.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_4.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_cana_stage2.png",
+  "grupo": "cana",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.8,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_2.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_4.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_cana_stage3.png",
+  "grupo": "cana",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.8,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_3.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_4.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_cana_stage4.png",
+  "grupo": "cana",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.8,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_4.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_4.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_cana_murcho.png",
+  "grupo": "cana",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.8,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_3.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Bamboo_4.obj",
+    "grade": 4,
+    "passo": 0.45
+   }
+  ],
+  "murcho": true
+ },
+ {
+  "saida": "assets/raw/crop_acai_stage1.png",
+  "grupo": "acai",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_1.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_acai_stage2.png",
+  "grupo": "acai",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_2.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_acai_stage3.png",
+  "grupo": "acai",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_3.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_acai_stage4.png",
+  "grupo": "acai",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_acai_murcho.png",
+  "grupo": "acai",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_3.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/PalmTree_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "murcho": true
+ },
+ {
+  "saida": "assets/raw/crop_laranja_stage2.png",
+  "grupo": "laranja",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_2.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_4.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_laranja_stage3.png",
+  "grupo": "laranja",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_3.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_4.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_laranja_stage4.png",
+  "grupo": "laranja",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_4.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_4.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_laranja_murcho.png",
+  "grupo": "laranja",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_3.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Orange_4.obj",
+    "grade": 2,
+    "passo": 0.72
+   }
+  ],
+  "murcho": true
+ },
+ {
+  "saida": "assets/raw/crop_abobora_stage2.png",
+  "grupo": "abobora",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_2.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_abobora_stage3.png",
+  "grupo": "abobora",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_3.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_abobora_stage4.png",
+  "grupo": "abobora",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_abobora_murcho.png",
+  "grupo": "abobora",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_3.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Pumpkin_4.obj",
+    "grade": 2,
+    "passo": 0.62
+   }
+  ],
+  "murcho": true
+ },
+ {
+  "saida": "assets/raw/crop_tomate_stage1.png",
+  "grupo": "tomate",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_1.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_4.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_tomate_stage2.png",
+  "grupo": "tomate",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_2.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_4.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_tomate_stage3.png",
+  "grupo": "tomate",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_3.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_4.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_tomate_stage4.png",
+  "grupo": "tomate",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_4.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_4.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_tomate_murcho.png",
+  "grupo": "tomate",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.84,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_3.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Tomato_4.obj",
+    "grade": 3,
+    "passo": 0.48
+   }
+  ],
+  "murcho": true
+ },
+ {
+  "saida": "assets/raw/crop_melancia_stage1.png",
+  "grupo": "melancia",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_1.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_4.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_melancia_stage2.png",
+  "grupo": "melancia",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_2.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_4.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_melancia_stage3.png",
+  "grupo": "melancia",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_3.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_4.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_melancia_stage4.png",
+  "grupo": "melancia",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_4.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_4.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/crop_melancia_murcho.png",
+  "grupo": "melancia",
+  "base": "assets/.cache/out/canteiro_vazio.png",
+  "largura": 0.88,
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_3.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ],
+  "enquadrar": [
+   {
+    "url": "../../../assets/3d/quaternius_crops/Watermelon_4.obj",
+    "grade": 2,
+    "passo": 0.66
+   }
+  ],
+  "murcho": true
+ },
+ {
+  "saida": "assets/raw/bld_paiol.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_farm/SmallBarn.obj"
+   }
+  ],
+  "recolorir": [
+   [
+    "#b5231c",
+    "#9b6a3e"
+   ],
+   [
+    "#c0392b",
+    "#9b6a3e"
+   ],
+   [
+    "#a62b20",
+    "#8a5a33"
+   ],
+   [
+    "#d03a2c",
+    "#a8743f"
+   ]
+  ],
+  "tolRecolor": 0.45
+ },
+ {
+  "saida": "assets/raw/bld_poco.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_farm/Well.obj"
+   }
+  ],
+  "recolorir": [
+   [
+    "#b5231c",
+    "#9b6a3e"
+   ],
+   [
+    "#c0392b",
+    "#9b6a3e"
+   ],
+   [
+    "#a62b20",
+    "#8a5a33"
+   ],
+   [
+    "#d03a2c",
+    "#a8743f"
+   ]
+  ],
+  "tolRecolor": 0.45
+ },
+ {
+  "saida": "assets/raw/bld_moinho.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_farm/Windmill.obj"
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/bld_caixa_dagua.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_farm/WaterTower.obj"
+   }
+  ],
+  "recolorir": [
+   [
+    "#b5231c",
+    "#9b6a3e"
+   ],
+   [
+    "#c0392b",
+    "#9b6a3e"
+   ],
+   [
+    "#a62b20",
+    "#8a5a33"
+   ],
+   [
+    "#d03a2c",
+    "#a8743f"
+   ]
+  ],
+  "tolRecolor": 0.45
+ },
+ {
+  "saida": "assets/raw/bld_silo.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/quaternius_farm/Silo.obj"
+   }
+  ],
+  "recolorir": [
+   [
+    "#b5231c",
+    "#9b6a3e"
+   ],
+   [
+    "#c0392b",
+    "#9b6a3e"
+   ],
+   [
+    "#a62b20",
+    "#8a5a33"
+   ],
+   [
+    "#d03a2c",
+    "#a8743f"
+   ]
+  ],
+  "tolRecolor": 0.45
+ },
+ {
+  "saida": "assets/raw/bld_ipe.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Tree_1_A_Color1.gltf"
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/bld_ipe_florido.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Tree_1_A_Color1.gltf"
+   }
+  ],
+  "amarelar": true
+ },
+ {
+  "saida": "assets/raw/bld_jabuticabeira.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Tree_3_A_Color1.gltf"
+   }
+  ],
+  "escurecer": true
+ },
+ {
+  "saida": "assets/raw/bld_mangueira.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Tree_2_A_Color1.gltf"
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/bld_arbusto.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Bush_1_A_Color1.gltf"
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/bld_moita.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Bush_2_A_Color1.gltf"
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/bld_pedra.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Rock_1_A_Color1.gltf"
+   }
+  ]
+ },
+ {
+  "saida": "assets/raw/bld_pedras.png",
+  "pecas": [
+   {
+    "url": "../../../assets/3d/kaykit_forest/Rock_3_A_Color1.gltf"
+   }
+  ]
+ }
+]

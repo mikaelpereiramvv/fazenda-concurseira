@@ -1,0 +1,193 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>render3d</title>
+<script type="importmap">
+{ "imports": {
+  "three": "../../../node_modules/three/build/three.module.js",
+  "three/addons/": "../../../node_modules/three/examples/jsm/"
+} }
+</script>
+<style>html,body{margin:0;background:transparent}</style>
+</head><body>
+<script type="module">
+// Renderizador de modelos 3D (OBJ/MTL, GLB, GLTF) para sprites isométricos 2:1 no estilo da fazenda:
+// câmera ortográfica a 45° de azimute e 30° de elevação, luz do canto superior esquerdo,
+// sombreamento chapado em 3 tons (toon) e contorno marrom-escuro.
+import * as THREE from 'three';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OutlineEffect } from 'three/addons/effects/OutlineEffect.js';
+
+const TAM = 1024;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(TAM, TAM);
+renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const efeito = new OutlineEffect(renderer, { defaultThickness: 0.0035, defaultColor: [0.29, 0.17, 0.10], defaultAlpha: 1 });
+
+// gradiente de 3 tons para o sombreamento chapado
+const grad = new THREE.DataTexture(new Uint8Array([165, 165, 165, 255, 215, 215, 215, 255, 255, 255, 255, 255]), 3, 1, THREE.RGBAFormat);
+grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
+
+const cache = new Map();
+async function carregar(url) {
+  if (cache.has(url)) return cache.get(url).clone(true);
+  let obj;
+  if (/\.obj$/i.test(url)) {
+    const mtlUrl = url.replace(/\.obj$/i, '.mtl');
+    const base = url.slice(0, url.lastIndexOf('/') + 1);
+    const loader = new OBJLoader();
+    try {
+      const mtl = await new MTLLoader().setPath(base).loadAsync(mtlUrl.slice(base.length));
+      mtl.preload(); loader.setMaterials(mtl);
+    } catch { /* sem mtl */ }
+    obj = await loader.loadAsync(url);
+  } else {
+    obj = (await new GLTFLoader().loadAsync(url)).scene;
+  }
+  cache.set(url, obj);
+  return obj.clone(true);
+}
+
+// recolore pixels verdes da textura de paleta (KayKit): ipê amarelo / jabuticabeira mais escura
+const texCache = new Map();
+function texturaRecolorida(tex, modo) {
+  const k = tex.uuid + modo;
+  if (texCache.has(k)) return texCache.get(k);
+  const img = tex.image;
+  const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+  const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+  const d = g.getImageData(0, 0, c.width, c.height);
+  const col = new THREE.Color();
+  for (let i = 0; i < d.data.length; i += 4) {
+    col.setRGB(d.data[i] / 255, d.data[i + 1] / 255, d.data[i + 2] / 255);
+    const hsl = {}; col.getHSL(hsl);
+    if (hsl.h > 0.17 && hsl.h < 0.45 && hsl.s > 0.25) {
+      if (modo === 'amarelar') col.setHSL(0.13 + (hsl.h - 0.3) * 0.08, Math.min(1, hsl.s * 1.15 + 0.1), Math.min(0.72, hsl.l * 1.05 + 0.08));
+      else col.setHSL(hsl.h + 0.02, hsl.s * 0.9, hsl.l * 0.62);
+      d.data[i] = col.r * 255; d.data[i + 1] = col.g * 255; d.data[i + 2] = col.b * 255;
+    }
+  }
+  g.putImageData(d, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = tex.colorSpace; t.flipY = tex.flipY; t.magFilter = tex.magFilter; t.minFilter = tex.minFilter;
+  texCache.set(k, t);
+  return t;
+}
+
+function toon(obj, o) {
+  obj.traverse((m) => {
+    if (!m.isMesh) return;
+    const mats = Array.isArray(m.material) ? m.material : [m.material];
+    const novos = mats.map((src) => {
+      const cor = (src.color ? src.color.clone() : new THREE.Color(1, 1, 1));
+      if (o.recolorir) for (const [de, para] of o.recolorir) {
+        const d = new THREE.Color(de);
+        if (Math.abs(cor.r - d.r) + Math.abs(cor.g - d.g) + Math.abs(cor.b - d.b) < (o.tolRecolor ?? 0.35)) cor.set(para);
+      }
+      if (o.murcho) { const hsl = {}; cor.getHSL(hsl); cor.setHSL(0.08, 0.38, Math.max(0.22, Math.min(0.42, hsl.l * 0.7 + 0.08))); }
+      // clareia tons muito escuros (as folhas do Quaternius saem quase pretas no estilo toon)
+      { const hsl = {}; cor.getHSL(hsl); if (hsl.l < (o.lumMin ?? 0.22)) cor.setHSL(hsl.h, hsl.s, (o.lumMin ?? 0.22) + hsl.l * 0.6); }
+      if (o.saturar) { const hsl = {}; cor.getHSL(hsl); cor.setHSL(hsl.h, Math.min(1, hsl.s * o.saturar), hsl.l); }
+      let map = src.map ?? null;
+      if (map && o.amarelar) map = texturaRecolorida(map, 'amarelar');
+      if (map && o.escurecer) map = texturaRecolorida(map, 'escurecer');
+      if (map && o.murcho) { cor.setRGB(0.85, 0.68, 0.45); }
+      return new THREE.MeshToonMaterial({
+        color: cor, map, gradientMap: grad, side: THREE.DoubleSide,
+        vertexColors: !!m.geometry.attributes.color, transparent: !!src.transparent, alphaTest: src.alphaTest || 0,
+      });
+    });
+    m.material = Array.isArray(m.material) ? novos : novos[0];
+    m.geometry.computeVertexNormals?.();
+  });
+}
+
+function camera(box, margem) {
+  const centro = box.getCenter(new THREE.Vector3());
+  const tam = box.getSize(new THREE.Vector3());
+  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 1000);
+  const az = Math.PI / 4, el = Math.PI / 6, dist = 100;
+  cam.position.set(centro.x + dist * Math.cos(el) * Math.sin(az), centro.y + dist * Math.sin(el), centro.z + dist * Math.cos(el) * Math.cos(az));
+  cam.lookAt(centro);
+  cam.updateMatrixWorld();
+  // enquadra projetando os 8 cantos da caixa
+  const inv = cam.matrixWorldInverse;
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
+    const p = new THREE.Vector3(x, y, z).applyMatrix4(inv);
+    minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+  }
+  const meio = Math.max(maxX - minX, maxY - minY) / 2 * (1 + margem);
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  cam.left = cx - meio; cam.right = cx + meio; cam.top = cy + meio; cam.bottom = cy - meio;
+  cam.updateProjectionMatrix();
+  void tam;
+  return cam;
+}
+
+// "grade": n×n cópias espaçadas pelo tamanho do modelo final (passo relativo), com leve variação
+const larguraBase = new Map();
+async function expandir(pecas) {
+  const out = [];
+  for (const p of pecas) {
+    if (!p.grade) { out.push(p); continue; }
+    // passo medido no modelo do estágio final (mesma URL trocando _1.._3 por _4), para todos os estágios ficarem alinhados
+    const ref = p.url.replace(/_(\d)\.obj$/i, '_4.obj');
+    if (!larguraBase.has(ref)) {
+      const o = await carregar(ref);
+      const b = new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3());
+      larguraBase.set(ref, Math.max(b.x, b.z));
+    }
+    const w = larguraBase.get(ref) * (p.passo ?? 0.9);
+    const n = p.grade;
+    let semente = 7;
+    const rnd = () => { semente = (semente * 9301 + 49297) % 233280; return semente / 233280; };
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      out.push({ url: p.url, x: (i - (n - 1) / 2) * w, z: (j - (n - 1) / 2) * w, ry: rnd() * Math.PI * 2, s: 0.92 + rnd() * 0.16 });
+    }
+  }
+  return out;
+}
+
+/**
+ * job = { pecas: [{url, x?, z?, s?, ry?}], enquadrar?: [{url,...}] (caixa fixa p/ estágios), margem?, recolorir?, murcho?, saturar?, espessura? }
+ * Retorna PNG (dataURL) 1024×1024 com fundo transparente.
+ */
+window.render = async (job) => {
+  const cena = new THREE.Scene();
+  cena.add(new THREE.HemisphereLight(0xfffaf0, 0xb09070, job.ambiente ?? 1.6));
+  cena.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const sol = new THREE.DirectionalLight(0xfff1d6, job.sol ?? 2.4);
+  sol.position.set(-6, 10, 4); // canto superior esquerdo da tela
+  cena.add(sol);
+  const grupo = new THREE.Group();
+  for (const p of await expandir(job.pecas)) {
+    const o = await carregar(p.url);
+    o.position.set(p.x ?? 0, p.y ?? 0, p.z ?? 0);
+    o.rotation.y = p.ry ?? 0;
+    o.scale.setScalar(p.s ?? 1);
+    toon(o, job);
+    grupo.add(o);
+  }
+  cena.add(grupo);
+  let box = new THREE.Box3().setFromObject(grupo);
+  if (job.enquadrar) {
+    const g2 = new THREE.Group();
+    for (const p of await expandir(job.enquadrar)) { const o = await carregar(p.url); o.position.set(p.x ?? 0, p.y ?? 0, p.z ?? 0); o.rotation.y = p.ry ?? 0; o.scale.setScalar(p.s ?? 1); g2.add(o); }
+    box = new THREE.Box3().setFromObject(g2);
+  }
+  if (job.espessura) efeito.defaultThickness = job.espessura;
+  const cam = camera(box, job.margem ?? 0.04);
+  renderer.setClearColor(0x000000, 0);
+  renderer.clear(true, true, true);
+  renderer.render(cena, cam); // contorno é aplicado em 2D depois (render.py)
+  // libera a cena (evita acúmulo entre renders)
+  cena.traverse((m) => { if (m.isMesh) { (Array.isArray(m.material) ? m.material : [m.material]).forEach((x) => x.dispose()); } });
+  return renderer.domElement.toDataURL('image/png');
+};
+window.pronto = true;
+</script>
+</body></html>

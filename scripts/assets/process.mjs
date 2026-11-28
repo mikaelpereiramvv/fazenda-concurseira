@@ -15,6 +15,7 @@
 //      npm run assets -- --debug (salva também os PNG individuais em assets/.cache/out)
 
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -199,6 +200,11 @@ async function ajustarTamanho(pngRecortado, cat) {
 // Índice dos arquivos brutos, tolerante ao que o celular faz com nomes:
 // extensão em maiúscula (.PNG/.JPG), extensão dobrada (.png.PNG) e letras maiúsculas no nome.
 const EXT_RE = /(\.(png|jpe?g|webp))+$/i;
+// Sprites gerados pelo renderizador 3D (chave -> sha1). Arte feita à mão sempre vence o 3D.
+const GERADOS_3D = (() => {
+  try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/3d/gerados.json'), 'utf8')); } catch { return {}; }
+})();
+const eh3d = (chave, arq) => !!GERADOS_3D[chave] && crypto.createHash('sha1').update(fs.readFileSync(arq)).digest('hex') === GERADOS_3D[chave];
 function indexarRaw(dir, prefixo = '') {
   const mapa = new Map();
   if (!fs.existsSync(dir)) return mapa;
@@ -208,8 +214,11 @@ function indexarRaw(dir, prefixo = '') {
     } else if (EXT_RE.test(ent.name)) {
       const chave = `${prefixo}${ent.name.replace(EXT_RE, '')}`.toLowerCase().trim();
       const atual = mapa.get(chave);
-      // se houver duplicata, fica a mais recente
-      if (!atual || fs.statSync(path.join(dir, ent.name)).mtimeMs > fs.statSync(atual).mtimeMs) mapa.set(chave, path.join(dir, ent.name));
+      const novo = path.join(dir, ent.name);
+      // duplicata: a arte feita à mão vence a do 3D; entre iguais, fica a mais recente
+      if (!atual) mapa.set(chave, novo);
+      else if (eh3d(chave, atual) !== eh3d(chave, novo)) { if (eh3d(chave, atual)) mapa.set(chave, novo); }
+      else if (fs.statSync(novo).mtimeMs > fs.statSync(atual).mtimeMs) mapa.set(chave, novo);
     }
   }
   return mapa;

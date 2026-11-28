@@ -1,5 +1,5 @@
 {
- "gerado": "2026-11-25T02:38:53.310Z",
+ "gerado": "2026-11-28T01:56:31.602Z",
  "atlas": "assets/atlas/farm.json",
  "frames": {
   "crop_cafe_stage1": {
@@ -258,9 +258,233 @@
     1
    ]
   },
+  "crop_abobora_stage2": {
+   "w": 384,
+   "h": 301,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_abobora_stage3": {
+   "w": 384,
+   "h": 314,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_abobora_stage4": {
+   "w": 384,
+   "h": 347,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_abobora_murcho": {
+   "w": 384,
+   "h": 314,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cana_stage1": {
+   "w": 384,
+   "h": 346,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cana_stage2": {
+   "w": 384,
+   "h": 381,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cana_stage3": {
+   "w": 384,
+   "h": 514,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cana_stage4": {
+   "w": 384,
+   "h": 701,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_cana_murcho": {
+   "w": 384,
+   "h": 514,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
   "crop_laranja_stage1": {
    "w": 384,
    "h": 273,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_laranja_stage2": {
+   "w": 384,
+   "h": 325,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_laranja_stage3": {
+   "w": 384,
+   "h": 428,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_laranja_stage4": {
+   "w": 384,
+   "h": 519,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_laranja_murcho": {
+   "w": 384,
+   "h": 428,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_tomate_stage1": {
+   "w": 384,
+   "h": 299,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_tomate_stage2": {
+   "w": 384,
+   "h": 366,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_tomate_stage3": {
+   "w": 384,
+   "h": 465,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_tomate_stage4": {
+   "w": 384,
+   "h": 517,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_tomate_murcho": {
+   "w": 384,
+   "h": 465,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_melancia_stage1": {
+   "w": 384,
+   "h": 354,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_melancia_stage2": {
+   "w": 384,
+   "h": 325,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_melancia_stage3": {
+   "w": 384,
+   "h": 338,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_melancia_stage4": {
+   "w": 384,
+   "h": 350,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_melancia_murcho": {
+   "w": 384,
+   "h": 338,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_acai_stage1": {
+   "w": 384,
+   "h": 299,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_acai_stage2": {
+   "w": 384,
+   "h": 377,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_acai_stage3": {
+   "w": 384,
+   "h": 453,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_acai_stage4": {
+   "w": 384,
+   "h": 545,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "crop_acai_murcho": {
+   "w": 384,
+   "h": 453,
    "ancora": [
     0.5,
     1
@@ -282,9 +506,33 @@
     1
    ]
   },
+  "bld_ipe": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_ipe_florido": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
   "bld_curral": {
    "w": 768,
    "h": 768,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_paiol": {
+   "w": 384,
+   "h": 384,
    "ancora": [
     0.5,
     1
@@ -322,6 +570,86 @@
     1
    ]
   },
+  "bld_poco": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_moinho": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_caixa_dagua": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_silo": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_jabuticabeira": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_mangueira": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_arbusto": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_moita": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_pedra": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
+  "bld_pedras": {
+   "w": 384,
+   "h": 384,
+   "ancora": [
+    0.5,
+    1
+   ]
+  },
   "animal_galinha_idle_01": {
    "w": 192,
    "h": 192,
@@ -348,37 +676,16 @@
   }
  },
  "faltando": [
-  "crop_abobora_stage2",
-  "crop_abobora_stage3",
-  "crop_abobora_stage4",
-  "crop_abobora_murcho",
   "crop_banana_stage1",
   "crop_banana_stage2",
   "crop_banana_stage3",
   "crop_banana_stage4",
   "crop_banana_murcho",
-  "crop_cana_stage1",
-  "crop_cana_stage2",
-  "crop_cana_stage3",
-  "crop_cana_stage4",
-  "crop_cana_murcho",
-  "crop_laranja_stage2",
-  "crop_laranja_stage3",
-  "crop_laranja_stage4",
-  "crop_laranja_murcho",
-  "crop_acai_stage1",
-  "crop_acai_stage2",
-  "crop_acai_stage3",
-  "crop_acai_stage4",
-  "crop_acai_murcho",
   "bld_casa_lv2",
   "bld_casa_lv3",
   "bld_casa_lv4",
-  "bld_ipe",
-  "bld_ipe_florido",
   "bld_lago",
   "bld_casa_farinha",
-  "bld_paiol",
   "bld_terreiro",
   "animal_capivara_idle_01",
   "animal_mico_idle_01",

@@ -49,3 +49,15 @@ Chaves sem imagem viram **placeholders** coloridos com o nome do asset. Estágio
 Prontos: 6 tiles e canteiro, milho (1–4 + murcho), feijão (1–4 + murcho), mandioca (1–4 + murcho), café (1–4 + murcho, baixa resolução), casa nível 1, cerca (2 direções + poste), 5 ícones e o ícone do app.
 
 Faltando (placeholder): abóbora, banana, cana, laranja e açaí; casa níveis 2–4; galinheiro, ipê (verde e florido), lago, casa de farinha, curral, paiol, terreiro; todos os animais.
+
+## Modelos 3D → sprites (tapa-buraco)
+
+Os pacotes gratuitos **Quaternius Crops / Farm Buildings** e **KayKit Forest** (CC0, ver `assets/3d/LICENCAS.md`) são renderizados em estilo cartoon com contorno marrom para preencher sprites que ainda não têm arte:
+
+```
+pip install playwright pillow && python3 scripts/assets/render3d/jobs.py && python3 scripts/assets/render3d/render.py scripts/assets/render3d/jobs.json
+```
+
+- Só gera chaves **sem** ilustração feita à mão. `assets/3d/gerados.json` guarda o hash de cada sprite gerado.
+- Para trocar por arte do Gemini/ChatGPT, basta subir o arquivo com o mesmo nome em `assets/raw/`: a arte feita à mão sempre vence (inclusive `.PNG` duplicado).
+- Descartados: Kenney Nature Kit (normais invertidas, renderiza preto) e Survival Kit (estilo destoa).

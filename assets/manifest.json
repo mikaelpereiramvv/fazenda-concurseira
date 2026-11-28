@@ -2,7 +2,7 @@
   "_comentario": "Fonte da verdade dos assets. Arte bruta do Gemini vai em assets/raw/<chave>.(png|jpg|webp). Folhas com vários itens vão em assets/raw/sheets e são descritas em 'sheets'. Rode: npm run assets",
   "atlas": { "nome": "farm", "tamanhoMax": 2048, "padding": 2 },
   "tamanhos": {
-    "bloco": { "largura": 384, "alturaMax": 576, "ancora": [0.5, 1], "_": "tiles, canteiros e culturas (bloco de terra isométrico); altura proporcional" },
+    "bloco": { "largura": 384, "alturaMax": 900, "ancora": [0.5, 1], "_": "tiles, canteiros e culturas (bloco de terra isométrico); altura proporcional" },
     "obj1": { "largura": 384, "altura": 384, "ancora": [0.5, 1] },
     "obj2": { "largura": 768, "altura": 768, "ancora": [0.5, 1] },
     "poste": { "largura": 384, "altura": 270, "ancora": [0.5, 1], "_": "poste da cerca: mais baixo para casar com a altura das tábuas" },
@@ -32,6 +32,8 @@
     "crop_cana_stage1": "bloco", "crop_cana_stage2": "bloco", "crop_cana_stage3": "bloco", "crop_cana_stage4": "bloco", "crop_cana_murcho": "bloco",
     "crop_laranja_stage1": "bloco", "crop_laranja_stage2": "bloco", "crop_laranja_stage3": "bloco", "crop_laranja_stage4": "bloco", "crop_laranja_murcho": "bloco",
     "crop_cafe_stage1": "bloco", "crop_cafe_stage2": "bloco", "crop_cafe_stage3": "bloco", "crop_cafe_stage4": "bloco", "crop_cafe_murcho": "bloco",
+    "crop_tomate_stage1": "bloco", "crop_tomate_stage2": "bloco", "crop_tomate_stage3": "bloco", "crop_tomate_stage4": "bloco", "crop_tomate_murcho": "bloco",
+    "crop_melancia_stage1": "bloco", "crop_melancia_stage2": "bloco", "crop_melancia_stage3": "bloco", "crop_melancia_stage4": "bloco", "crop_melancia_murcho": "bloco",
     "crop_acai_stage1": "bloco", "crop_acai_stage2": "bloco", "crop_acai_stage3": "bloco", "crop_acai_stage4": "bloco", "crop_acai_murcho": "bloco",
 
     "bld_casa_lv1": "obj2", "bld_casa_lv2": "obj2", "bld_casa_lv3": "obj2", "bld_casa_lv4": "obj2",
@@ -44,6 +46,9 @@
     "bld_terreiro": "obj2",
     "bld_cerca_a": "obj1", "bld_cerca_b": "obj1", "bld_cerca_poste": "poste",
     "bld_caminho": "bloco",
+    "bld_poco": "obj1", "bld_moinho": "obj1", "bld_caixa_dagua": "obj1", "bld_silo": "obj1",
+    "bld_jabuticabeira": "obj1", "bld_mangueira": "obj1",
+    "bld_arbusto": "obj1", "bld_moita": "obj1", "bld_pedra": "obj1", "bld_pedras": "obj1",
 
     "animal_galinha_idle_01": "animal_p",
     "animal_cachorro_idle_01": "animal_m",
